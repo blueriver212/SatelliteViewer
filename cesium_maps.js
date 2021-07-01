@@ -17,6 +17,7 @@ function single_year () {
 }
 
 function two_year () {
+  // adding a comment
     const viewer_compare = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: Cesium.createWorldTerrain()
         }); 
