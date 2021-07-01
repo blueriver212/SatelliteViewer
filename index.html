@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Hello World!</title>
+  <script src="../node_modules/cesium/Build/Cesium/Cesium.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+ 
+  <style>
+    @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
+     html, body, #cesiumContainer {
+          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; 
+          /* This here will allow the cesium container to fill the rest of the page */
+          display: flex; flex-direction: column; 
+      }
+           .toolbar-left {
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+    
+        #slider {
+            position: absolute;
+            left: 50%;
+            top: 0px;
+            background-color: #D3D3D3;
+            width: 4px;
+            height: 100%;
+            z-index: 9999;
+        }
+
+        #slider:hover {
+            cursor: ew-resize;
+        }
+
+        
+
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Future Space Population</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active col-md-auto">
+          <a class="nav-link" href="#">View 1 Year <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item col-md-auto">
+          <a class="nav-link" href="#">Compare 2 Years</a>
+        </li>
+        <li class="nav-item col-md-auto">
+          <a class="nav-link" href="#">Hotspot Analysis</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li> -->
+        <input type="text" class="form-control" placeholder="View a Single Year" aria-label="year" aria-describedby="basic-addon1">
+      </ul>
+    </div>
+  </nav>
+
+  <div id="cesiumContainer">
+    <div id="slider"></div>
+  </div>
+
+    <script>
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain()
+      });    
+
+      viewer.dataSources.add(
+      Cesium.GeoJsonDataSource.load(
+        "../USA.json",
+        {
+          stroke: Cesium.Color.HOTPINK,
+          fill: Cesium.Color.PINK.withAlpha(0.5),
+          strokeWidth: 3,
+        }
+      )
+    );
+    
+    var slider = document.getElementById('slider');
+    viewer.scene.imagerySplitPosition = (slider.offsetLeft) / slider.parentElement.offsetWidth;
+
+    var handler = new Cesium.ScreenSpaceEventHandler(slider);
+
+    var bMoveActive = false;
+
+    function move(movement){
+      if(!bMoveActive)
+          return;
+
+      var nMove = movement.endPosition.x ;//- movement.startPosition.x;
+      var splitPosition = (slider.offsetLeft + nMove) / slider.parentElement.offsetWidth;
+      slider.style.left = 100.0 * splitPosition + "%";
+      viewer.scene.imagerySplitPosition = splitPosition;
+    }
+
+    handler.setInputAction(function(movement) {
+          bMoveActive = true;
+      }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+      handler.setInputAction(function(movement) {
+          bMoveActive = true;
+      }, Cesium.ScreenSpaceEventType.PINCH_START);
+
+      handler.setInputAction(function(movement) {
+          move(movement);
+      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      handler.setInputAction(function(movement) {
+          move(movement);
+      }, Cesium.ScreenSpaceEventType.PINCH_MOVE);
+
+      handler.setInputAction(function(movement) {
+          bMoveActive = false;
+      }, Cesium.ScreenSpaceEventType.LEFT_UP);
+      handler.setInputAction(function(movement) {
+          bMoveActive = false;
+      }, Cesium.ScreenSpaceEventType.PINCH_END);
+
+  </script>
+</body>
+</html>
