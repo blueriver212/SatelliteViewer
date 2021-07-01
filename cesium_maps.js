@@ -22,3 +22,8 @@ function two_year () {
         terrainProvider: Cesium.createWorldTerrain()
         }); 
 }
+
+function removeMapData () {
+  viewer.dataSources.removeAll();
+  console.log('ive been clicked');
+}
