@@ -1,5 +1,7 @@
 function hotspotData () {
     removeMapData();
+    // remove the slider
+    document.getElementById('slider').style.zIndex = "-1";
 
     viewer.dataSources.add(
     Cesium.GeoJsonDataSource.load(

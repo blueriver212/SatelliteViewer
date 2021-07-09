@@ -1,7 +1,11 @@
 function twoYear () {
     removeMapData();
-
+    
     var slider = document.getElementById('slider');
+    
+    // need to change the z index of the slider 
+    document.getElementById('slider').style.zIndex = "2000";
+    
     viewer.scene.imagerySplitPosition = (slider.offsetLeft) / slider.parentElement.offsetWidth;
 
     var handler = new Cesium.ScreenSpaceEventHandler(slider);

@@ -4,6 +4,9 @@ function oneYearLoad() {
     console.log("I have been clicked");
     removeMapData();
     main();
+
+    // remove the slider from the screen 
+    document.getElementById('slider').style.zIndex = "-1";
 }
 
 function main() {
