@@ -1,5 +1,51 @@
+const { viewerCesium3DTilesInspectorMixin } = require("cesium");
+
 function twoYear () {
     removeMapData();
+    
+    
+    var viewer2 = new Cesium.Viewer('cesiumContainer', {
+        skyBox : false,
+        skyAtmosphere : false,
+        baseLayerPicker : false,
+        bottomContainer: false,
+        imageryProvider :new Cesium.SingleTileImageryProvider({
+            url : './images/2016c.jpg'
+        })
+    });
+
+    // viewer.dataSources.add(Cesium.GeoJsonDataSource.load('USA.json', {
+    //     stroke: Cesium.Color.HOTPINK, 
+    //     fill: Cesium.Color.PINK,
+    //     strokeWidth: 3
+    // }))
+
+    
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('USA.json', {
+            stroke: Cesium.Color.HOTPINK, 
+            fill: Cesium.Color.PINK,
+            strokeWidth: 3
+        }))
+
+    
+    var layers = viewer.imageryLayers;
+    var blackMarble = layers.addImageryProvider(new Cesium.SingleTileImageryProvider({
+                url : '2012.jpg'
+            }),1);
+
+    blackMarble.splitDirection = Cesium.ImagerySplitDirection.RIGHT;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     var slider = document.getElementById('slider');
     
@@ -42,5 +88,7 @@ function twoYear () {
       handler.setInputAction(function(movement) {
           bMoveActive = false;
       }, Cesium.ScreenSpaceEventType.PINCH_END);
-}
 
+
+
+}
