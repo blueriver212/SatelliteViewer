@@ -1,5 +1,3 @@
-const { viewerCesium3DTilesInspectorMixin } = require("cesium");
-
 function twoYear () {
     removeMapData();
     

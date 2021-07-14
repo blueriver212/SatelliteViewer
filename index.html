@@ -20,6 +20,9 @@
   <script src="/one_year.js"></script>
   <script src="/two_year.js"></script>
   <script src="/hotspot.js"></script>
+  <script src="/main.js"></script>
+  <script src = "/dat.gui.min.js"> </script> 
+
 
 <style>
     @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
@@ -35,7 +38,7 @@
             left: 5px;
         }  */
         /* Turn on when a slider is needed */
-        #slider {
+        /* #slider {
             position: absolute;
             height: 100%;
             left: 50%;
@@ -46,10 +49,12 @@
         }
         #slider:hover {
             cursor: ew-resize;
-        }
+        } */
         .navbar {
-          z-index: 9999;
+          z-index: -1;
         }
+
+        #gui { position: absolute; top: 100px; }
 </style>
 </head>
 <body>
@@ -89,6 +94,7 @@
       terrainProvider: Cesium.createWorldTerrain()
       });
       
+    main(viewer);
    
 
   </script>
