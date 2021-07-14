@@ -1,40 +1,63 @@
-// a class to deal with catalogue data, giving a number of functions to deal with its format
-class Catalogue {
-	
-    constructor(){
-        this.debris_kep=[]; // debris described in keplerian elements
-        this.debris_tle=[]; // debris described in two line elements
-        this.data_load_complete=false; // start by assigning it to false
-    }
 
-    clear_catalogue(type) {
-        // this will restart all of the lists
+// author: Zhen Li
+// email: hpulizhen@163.com
 
-        if(type=="kpe") {
-            this.debris_kep=[];
-        }
-        else if (type=="tle") {
-            this.debris_tle=[];
-        }
-        else {
-            this.debris_kep = [];
-            this.debris_tle = [];
-        }
-        this.data_load_complete=false;
-    }
+//the class to manage the Catalogue data
 
-    // not sure this function is actually used ... 
-    stringToDate(_date_str, _format, _delimiter) {
-        
-    }
+class Catalogue
+{
+	constructor(){
+		/// nothing
+		this.debris_kep=[]; /// debris described in keplerian elements
+		this.debris_tle=[]; /// debris described in two line elements
+		this.data_load_complete=false;
+		
+	}
 
-    getNumberTotal() {
-        // returns the total number of debris objects
+	clear_catalog(type)
+	{
+		if(type=="kpe")
+		{
+			this.debris_kep=[];
+		}
+		else if(type=="tle")
+		{
+			this.debris_tle=[];
+		}
+		else
+		{
+			this.debris_kep=[];
+			this.debris_tle=[];
+		}
 
-        return this.debris_kep.length + this.debris_tle.length;
-    }
+		this.data_load_complete=false;
+	}
 
-    getDebriInfo(isat)
+	stringToDate(_date_str,_format,_delimiter)
+	{
+
+		var time = _date_str.split(_delimiter);
+		var formatedDate = new Date(time[0],(time[0]-1),time[2]);
+		return formatedDate;
+
+        // var formatLowerCase=_format.toLowerCase();
+        // var formatItems=formatLowerCase.split(_delimiter);
+        // var dateItems=_date_str.split(_delimiter);
+        // var monthIndex=formatItems.indexOf("mm");
+        // var dayIndex=formatItems.indexOf("dd");
+        // var yearIndex=formatItems.indexOf("yyyy");
+        // var month=parseInt(dateItems[monthIndex]);
+        // month-=1;
+        // var formatedDate = new Date(dateItems[yearIndex],month,dateItems[dayIndex]);
+        // return formatedDate;
+	}
+
+	getNumberTotal()
+	{
+		return this.debris_kep.length + this.debris_tle.length;
+	}
+
+	getDebriInfo(isat)
 	{
 		if(isat < this.debris_kep.length)
 		{
@@ -47,7 +70,7 @@ class Catalogue {
 		}
 	}
 
-    getDebriName(isat)
+	getDebriName(isat)
 	{
 		if(isat < this.debris_kep.length)
 		{
@@ -59,8 +82,9 @@ class Catalogue {
 			return this.debris_tle[isat-this.debris_kep.length]["name"];
 		}
 	}
-
-    getDebriOperation_status(isat)
+	
+	//ref: http://www.celestrak.com/satcat/status.php
+	getDebriOperation_status(isat)
 	{
 		var s = -1;
 		if(isat < this.debris_kep.length)
@@ -92,62 +116,64 @@ class Catalogue {
 
 	}
 
-    loadcatlog(orbit_type, jsonFile) {
-        console.log("loading files...");
-
-        var that = this;
-
-        // this is where he uses jquery to actually load the files
-
-        $.ajax({
-            url:jsonFile,
-            type:"GET",
-            dataType:"json",
-            success: function (data) {
-                // this will parse the returning data into a class object
-                console.log('im inside the jquery function');
-                console.log(data.slice(0,10));
-                if (orbit_type == "tle") {
-                    that.debris_tle = data.debris;
-                    console.log("I am loading tle data tle using ajax");
-					console.log(that.debris_tle.length);
-					//console.log(data.debris.length);
-                    that.data_load_complete = true;
-                }
-
-                else if (orbit_type == "kep") {
-                    that.debris_kep = data.debris;
-                    var isat = -1;
-                    for (isat = 0; isat < that.debris_kep.length; isat++) {
-                        var idebri = that.debris_kep[isat];
-
-                        var epoch_of_orbit_str = idebri["epoch_of_orbit"];
+	/// read in the debris data in the format of JSON
+	loadcatlog(orbit_type,jsonFile)
+	{
+		console.log("reading JSON")
+		var that = this;
+		/// Here we used sync mode which will cause Cesium an issue in the loading of Earth
+		/// possible solution is to integrate Cesium viewer in the Catalogue class 
+		$.ajax({
+			url: jsonFile,
+			type: "GET",
+			dataType: "json",
+			async: true,
+			success: function(data) { /// a callback function to parse the data into the class object
+				if(orbit_type == "tle")
+				{
+				that.debris_tle = data.debris;
+				console.log("I am loading tle data tle using ajax");
+				console.log(that.debris_tle.length);
+				that.data_load_complete = true;
+				}
+				else if(orbit_type == "kep")
+				{
+				that.debris_kep = data.debris;
+				var isat=-1;
+				for(isat = 0;isat < that.debris_kep.length; isat++)
+				{
+					var idebri = that.debris_kep[isat];
 					
-                        var t0_str = epoch_of_orbit_str.split("-");
-                        var month = parseInt(t0_str[1])-1;o
-                        that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);
-                        
-                        that.debris_kep[isat]['semi_major_axis'] = parseFloat(idebri['semi_major_axis']);
-                        that.debris_kep[isat]["eccentricity"] = parseFloat(idebri["eccentricity"]);
-                        that.debris_kep[isat]["inclination"] = parseFloat(idebri["inclination"]);
-                        that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
-                        that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
-                        that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
-                    }
+					var epoch_of_orbit_str = idebri["epoch_of_orbit"];
+					
+					var t0_str = epoch_of_orbit_str.split("-");
+					var month = parseInt(t0_str[1])-1;
+					that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);
+					
+					that.debris_kep[isat]['semi_major_axis'] = parseFloat(idebri['semi_major_axis']);
+					that.debris_kep[isat]["eccentricity"] = parseFloat(idebri["eccentricity"]);
+					that.debris_kep[isat]["inclination"] = parseFloat(idebri["inclination"]);
+					that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
+					that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
+					that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
+				}
+				console.log("I am loading kep data using ajax");
+				console.log(that.debris_kep.length);
+				that.data_load_complete = true;
+				}
+			}
 
-                    console.log("I am loading kep data using ajax");
-                    console.log(that.debris_kep.length);
-                    that.data_load_complete = true;
-                }
-            }
-        })
-    }
+		})
 
 
-    // compute the position of debris in eci
-    // time is in js date in UTC
-    compute_derbi_position_eci(isat, time) {
-        if(isat < this.debris_kep.length) /// using keplerian propagation
+
+	}
+	
+	/// compute the positon of debris in eci
+	/// time is in  JavaScript Date in UTC
+	compute_debri_position_eci(isat, time)
+	{
+		if(isat < this.debris_kep.length) /// using keplerian propagation
 		{
 			var idebri = this.debris_kep[isat];
 			var positionAndVelocity={position:{x:0,y:0,z:0},velocity:{x:0,y:0,z:0}};
@@ -200,8 +226,12 @@ class Catalogue {
 			alert("unknown debri index!!!");
 		}
 
-    }
+	}
+	/*convert from keplerian elements to twoline elements */
+	kep2tle(kep)
+	{
 
-    
+	}
 
-} // end of catalogue
+
+}
