@@ -310,25 +310,25 @@ function GUIset()
 	folderSpacecraft.add( aaa, 'catalogName', Object.values(cataloglist) ).onChange(
 		function( value )
 		{
-      // alert(value);
+      alert(value);
       ///first clear all the catalog data
-      satcat.clear_catalog();
+      satcat.clear_catalogue();
       data_load = false;
       debris_collection.removeAll();
       debri_collection_radar.removeAll();
 
-      var satcat_logfile="";
-      var type="";
-      if(value.substring(0,6) == "fspcat")
-      {
-        type="kep";
-        satcat_logfile = data_path + "catalogue/" + value  + ".json";
-      }
-      else if(value.substring(0,3) == "tle")
-      {
-        type="tle";
-        satcat_logfile = data_path + "tle/" + value  + ".json";
-      }
+    var satcat_logfile="http://satellite-api.herokuapp.com/2019";    
+    var type="";
+    //   if(value.substring(0,6) == "fspcat")
+    //   {
+    //     type="kep";
+    //     satcat_logfile = data_path + "catalogue/" + value  + ".json";
+    //   }
+    //   else if(value.substring(0,3) == "tle")
+    //   {
+    //     type="tle";
+    //     satcat_logfile = data_path + "tle/" + value  + ".json";
+    //   }
 
       satcat.loadcatlog(type,satcat_logfile);
       ///load the corresponding catalog files
@@ -344,8 +344,8 @@ function GUIset()
 //window.onload = function()
 
 function main(viewer) {
-  
-  satcat = new Catalogue();
+
+  var satcat = new Catalogue();
 
   GUIset();
 
