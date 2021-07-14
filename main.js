@@ -318,7 +318,7 @@ function GUIset()
       debri_collection_radar.removeAll();
 
     var satcat_logfile="http://satellite-api.herokuapp.com/2019";    
-    var type="";
+    var type="tle";
     //   if(value.substring(0,6) == "fspcat")
     //   {
     //     type="kep";
@@ -351,14 +351,7 @@ function main(viewer) {
 
   clockViewModel = new Cesium.ClockViewModel();
 
-//   viewer = new Cesium.Viewer('main_viewer', {
-//     baseLayerPicker : false,
-//     geocoder : false,
-//     timeline: true,
-//     clockViewModel : clockViewModel
-//     });
-
-    
+   
     // //Enable depth testing so things behind the terrain disappear.
     // viewer.scene.globe.depthTestAgainstTerrain = true;
 

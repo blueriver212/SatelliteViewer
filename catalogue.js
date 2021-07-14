@@ -1,5 +1,6 @@
 // a class to deal with catalogue data, giving a number of functions to deal with its format
 class Catalogue {
+	
     constructor(){
         this.debris_kep=[]; // debris described in keplerian elements
         this.debris_tle=[]; // debris described in two line elements
@@ -109,8 +110,8 @@ class Catalogue {
                 if (orbit_type == "tle") {
                     that.debris_tle = data.debris;
                     console.log("I am loading tle data tle using ajax");
-                    console.log(that.debris_tle.length);
-
+					console.log(that.debris_tle.length);
+					//console.log(data.debris.length);
                     that.data_load_complete = true;
                 }
 

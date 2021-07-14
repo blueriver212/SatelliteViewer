@@ -20,8 +20,9 @@
   <script src="/one_year.js"></script>
   <script src="/two_year.js"></script>
   <script src="/hotspot.js"></script>
-  <script src="/main.js"></script>
+  <!-- <script src="/main.js"></script> -->
   <script src = "/dat.gui.min.js"> </script> 
+  <script src = "/satellites.js"> </script> 
 
 
 <style>
@@ -93,9 +94,52 @@
     const viewer = new Cesium.Viewer('cesiumContainer', {
       terrainProvider: Cesium.createWorldTerrain()
       });
-      
-    main(viewer);
-   
+    
+    debris_collection = new Cesium.PointPrimitiveCollection();
+    debris_collection = viewer.scene.primitives.add(debris_collection);
+
+    // debris_collection.add({
+    //   position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
+    //   color : Cesium.Color.YELLOW
+    // });
+    var center = Cesium.Cartesian3.fromDegrees(0,0,0);
+    debris_collection.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
+    debris_collection.blendOption = Cesium.BlendOption.OPAQUE;
+
+    // debris_collection.add({
+    //   color : Cesium.Color.ORANGE,
+    //   position : new Cesium.Cartesian3(0.0, 0.0, 0.0) // center
+    // });
+    // debris_collection.add({
+    //   color : Cesium.Color.YELLOW,
+    //   position : new Cesium.Cartesian3(1000000.0, 0.0, 0.0) // east
+    // });
+    // debris_collection.add({
+    //   color : Cesium.Color.GREEN,
+    //   position : new Cesium.Cartesian3(0.0, 1000000.0, 0.0) // north
+    // });
+    // debris_collection.add({
+    //   color : Cesium.Color.CYAN,
+    //   position : new Cesium.Cartesian3.fromDegrees(-75.59777, 40.03883, 1000000.0) // up
+    // });
+
+
+
+
+    //main(viewer);
+   // console.log(satellites.features[0].geometry.coordinates[1]);
+    for (const key of Object.keys(satellites)) {
+      var i = 0;
+      for (i; i<Object.keys(satellites.features).length; i++) { //this is what it should be 
+      //for (i; i<10; i++) { // just for testing
+        //console.log(satellites.features[i].geometry.coordinates[1]);
+        debris_collection.add({
+          color : Cesium.Color.CYAN,
+          position : new Cesium.Cartesian3.fromDegrees(satellites.features[i].geometry.coordinates[0], satellites.features[i].geometry.coordinates[1], satellites.features[i].geometry.coordinates[2]) // up
+        });
+      }
+    }
+ 
 
   </script>
 </body>
