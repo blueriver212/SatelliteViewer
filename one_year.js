@@ -28,9 +28,6 @@ function oneYearLoad() {
 
     satcat.loadcatlog(type,satcat_logfile);
     
-    
-    
-    
     clockViewModel = new Cesium.ClockViewModel();
  
      //Enable depth testing so things behind the terrain disappear.
