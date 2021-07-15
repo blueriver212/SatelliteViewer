@@ -131,14 +131,15 @@ class Catalogue
 			success: function(data) { /// a callback function to parse the data into the class object
 				if(orbit_type == "tle")
 				{
-				that.debris_tle = data.debris;
+				//that.debris_tle = data.debris; // this does not work because there's not a debris class
+				that.debris_tle = data;
 				console.log("I am loading tle data tle using ajax");
 				console.log(that.debris_tle.length);
 				that.data_load_complete = true;
 				}
 				else if(orbit_type == "kep")
 				{
-				that.debris_kep = data.debris;
+				that.debris_kep = data;
 				var isat=-1;
 				for(isat = 0;isat < that.debris_kep.length; isat++)
 				{
