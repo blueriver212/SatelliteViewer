@@ -1,3 +1,5 @@
+const { countReset } = require("console");
+
 var viewer_main, radar_viewer;
 var start_jd;
 
@@ -10,21 +12,26 @@ var satcat;
 var data_path="data/";
 
 
-// function oneYearLoad() {
-//     console.log("I have been clicked");
-//     removeMapData();
-//     main();
-    
-//     // remove the slider from the screen 
-//     document.getElementById('slider').style.zIndex = "-1";
-// }
+function removeMapData () {
+    viewer_main.PointPrimitiveCollection.removeAll();
+    //debris_collection.removeAll();
+    console.log('ive been clicked');
+  }
 
 function oneYearLoad() {
-    
+    count = count + 1; 
+    console.log(count);
     satcat = new Catalogue();
+
+    if (count >= 2) {
+      removeMapData(); // only remove after the first click
+    } else {
     
+    // get the user's year from the search box
+    var userOneYear = document.getElementById('1yearsearch').value;
+
     type="test";
-    satcat_logfile="http://satellite-api.herokuapp.com/test/test";
+    satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
 
     satcat.loadcatlog(type,satcat_logfile);
     
@@ -115,4 +122,5 @@ function oneYearLoad() {
      viewer_main.scene.preRender.addEventListener(update_debris_position);
      ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
   
+  }
 }

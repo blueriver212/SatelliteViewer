@@ -15,6 +15,9 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
 
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <!-- <script src="/cesium_maps.js"></script>
   
 
@@ -59,6 +62,55 @@
         }
 
         #gui { position: absolute; top: 100px; }
+
+
+        /* This is for the search bar */
+                * {
+          box-sizing: border-box;
+        }
+
+        /* Style the search field */
+        form.example input[type=text] {
+          padding: 10px;
+          font-size: 17px;
+          border: 1px solid grey;
+          float: left;
+          width: 80%;
+          background: #f1f1f1;
+          position: absolute;
+          left:2%;
+          top:10%;
+          width:10%;
+        }
+
+        /* Style the submit button */
+        form.example button {
+          float: left;
+          width: 20%;
+          padding: 10px;
+          background: #2196F3;
+          color: white;
+          font-size: 17px;
+          border: 1px solid grey;
+          border-left: none; /* Prevent double borders */
+          cursor: pointer;
+          position: absolute;
+          left:12%;
+          top:10%;
+          width:5%;
+        }
+
+        form.example button:hover {
+          background: #0b7dda;
+        }
+
+        /* Clear floats */
+        form.example::after {
+          content: "";
+          clear: both;
+          display: table;
+         
+        }
 </style>
 </head>
 <body>
@@ -88,9 +140,27 @@
 
   <div id="cesiumContainer">
     <div id="slider"></div>
+    <form class="example" style="margin:auto;max-width:300px; z-index: 9999;">
+      <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
+      <button type="button" onclick="oneYearLoad()"><i class="fa fa-search"></i></button>
+    </form>
   </div>
 
-    <script>
+  <!-- Create a search bar for the one year capabilities -->
+
+  
+
+  <script>
+// stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
     
 // author: Zhen Li
@@ -113,6 +183,7 @@ var debri_collection_radar; /// it is the same as debris_collection
 var satcat;
 var data_path="data/";
 
+var count = 0;
 
 var options3D = {
   homeButton : false,
@@ -268,7 +339,7 @@ function GUIset()
       }
       else if(value.substring(0,4) == "2019") {
         type="test";
-        satcat_logfile="http://satellite-api.herokuapp.com/test/test";
+        satcat_logfile="http://satellite-api.herokuapp.com/2019";
       }
 
       satcat.loadcatlog(type,satcat_logfile);
