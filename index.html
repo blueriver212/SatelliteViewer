@@ -22,8 +22,10 @@
   <script src="/hotspot.js"></script>
  <script src="/main.js"></script> 
   <script src = "/dat.gui.min.js"> </script> -->
-  <script src = "/satellites.js"> </script> 
-  <script src="/catalogue.js"></script>
+  <script src = "/satellite.min.js"> </script> 
+  <script src="/Catalogue.js"></script>
+  <script src = "/dat.gui.min.js"> </script> 
+  <script src = "/KeplerianElement.js"> </script> 
 
 <style>
     @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
@@ -88,51 +90,310 @@
   </div>
 
     <script>
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
     
-    // start with the main viewer
-    const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: Cesium.createWorldTerrain()
-    });
+// author: Zhen Li
+// email: hpulizhen@163.com
+
+// Grant CesiumJS access to your ion assets
+
+// Z. Li's Cesium ion access token
+// Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
+// Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
+
+var viewer_main, radar_viewer;
+var start_jd;
+
+var clockViewModel; /// the clockmodel for synchronisation of two views
+var data_load=false;
+var debris_collection;
+var debri_collection_radar; /// it is the same as debris_collection
+
+var satcat;
+var data_path="data/";
+
+
+var options3D = {
+  homeButton : false,
+  fullscreenButton : false,
+  sceneModePicker : false,
+  clockViewModel : clockViewModel,
+  infoBox : false,
+  geocoder : false,
+  sceneMode : Cesium.SceneMode.SCENE3D,
+  navigationHelpButton : false,
+  animation : false,
+  CreditDisplay : false,
+  timeline: false,
+  baseLayerPicker : false
+};
+
+var options2D = {
+  homeButton : false,
+  fullscreenButton : false,
+  sceneModePicker : true,
+  clockViewModel : clockViewModel,
+  infoBox : true,
+  geocoder : false,
+  sceneMode : Cesium.SceneMode.SCENE2D,
+  navigationHelpButton : false,
+  animation : false,
+  CreditDisplay : false,
+  timeline: false,
+  baseLayerPicker : false
+};
+
+
+function icrf_view_main(scene, time) 
+{
+  if (scene.mode !== Cesium.SceneMode.SCENE3D) 
+  {
+      return;
+  }
+  var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+  if (Cesium.defined(icrfToFixed)) 
+  {
+      var camera = viewer_main.camera;
+      var offset = Cesium.Cartesian3.clone(camera.position);
+      var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
+      camera.lookAtTransform(transform, offset);
+  }
+}
+
+
+function ecef2blh(x_ecef,y_ecef,z_ecef)
+{
+  //var ellipsoid_wgs84 = Cesium.Ellipsoid.WGS84;
+	var FE_WGS84 = (1.0/298.257223563);
+	var	RE_WGS84 = 6378137.0;
+	var	PI = Math.PI;
+	var e2=FE_WGS84*(2.0-FE_WGS84);
+	var	r2=x_ecef*x_ecef + y_ecef*y_ecef,z,zk,v=RE_WGS84,sinp;
+	for(z=z_ecef,zk=0.0;Math.abs(z-zk)>=1E-4;)
+	{
+		zk=z;
+		sinp=z/Math.sqrt(r2+z*z);
+		v=RE_WGS84/Math.sqrt(1.0-e2*sinp*sinp);
+		z=z_ecef+v*e2*sinp;
+  }
+  var blh = new Array();
+	blh[0]=r2>1E-12?Math.atan(z/Math.sqrt(r2)):(z_ecef>0.0?Math.PI/2.0:-Math.PI/2.0);
+	blh[1]=r2>1E-12?Math.atan2(y_ecef,x_ecef):0.0;
+  blh[2]=Math.sqrt(r2+z*z)-v;
+  return blh;
+	}
+
+
+
+function xyz2enu_matrix(lat,lon)
+{
+    var E = new Array(9);
+    var sinp=Math.sin(lat),cosp=Math.cos(lat),sinl=Math.sin(lon),cosl=Math.cos(lon);
+    E[0]=-sinl;      E[1]=cosl;       E[2]=0.0;
+    E[3]=-sinp*cosl; E[4]=-sinp*sinl; E[5]=cosp;
+    E[6]=cosp*cosl;  E[7]=cosp*sinl;  E[8]=sinp;
+    return E;
+}
+
+
+//function update_debris_position(debris_set, viewer,mycatlog)
+function update_debris_position() // this seems to be the proble,
+{
+    var debris_set = debris_collection;
+    var viewer = viewer_main;
+    var mycatlog = satcat;
+
+    time = viewer.clock.currentTime; /// the current computer time in TAI? not in UTC?
+    var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
     
-    // initialise any new variables
-    var viewer_main, radar_viewer;
-    var start_jd;
+    var time_utc = Cesium.JulianDate.now();
+    Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
 
-    var clockViewModel; /// the clockmodel for synchronisation of two views
-    var data_load=false;
-    var debris_collection;
-    var debri_collection_radar; /// it is the same as debris_collection
+    // var t1_now = Cesium.JulianDate.now();
+    // var t2_now = Date.now();
 
-    var satcat;
-    var data_path="data/";
+    var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
+    var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
+    
+    
+    var position_ecef = new Cesium.Cartesian3();
+    var points = debris_set._pointPrimitives;
+    var length = points.length;
 
-    // set up an ajax route that returns the data from the catalogue class
-    var orbit_type = "kep";
-    var jsonFile = "http://satellite-api.herokuapp.com/2019";
+    // if (length > 0)
+    // {
+    //   console.log("point number in debris_set._pointPrimitives is loaded!");
+    // }
+
+    var pos_radar_view = new Cesium.Cartesian3();
+
+    for (var i = 0; i < length; ++i) 
+    {
+      var point = points[i];
+      //Cesium.Cartesian3.clone(point.position, position_ecef);
+      ///compute the position of debris according to time
+      if (Cesium.defined(icrfToFixed)) // date transformation
+      {
+        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        
+        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x*1000,positionAndVelocity.position.y*1000,positionAndVelocity.position.z*1000);
+        
+        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
+        
+        Cesium.Cartesian3.clone(position_ecef,pos_radar_view);
+
+        point.position = position_ecef; //// update back
+        
+
+  //       ///update the radar_view
+  //       //debri_collection_radar._pointPrimitives[i].position = pos_radar_view;
+
+      }
+  }
+}
 
 
-    var satcat = new Catalogue;
 
-    satcat.loadcatlog(orbit_type, jsonFile);
+ var cataloglist =
+{
+  cat_1 : "fspcat_test",  /// the catalogue file for test
+  cat_2 : "fspcat_20190522_v04_nodeb", //// baseline_fspcat_20190522_v04_nodeb.json
+	cat_3 : "fspcat_20280101_v04_nodeb", /// fspcat_20280101_v04_nodeb.json
+	cat_4 : "fspcat_20230101", /// fspcat_20230101.json
+  cat_5 : "fspcat_20230701", /// fspcat_20230701.json
+  cat_6 : "fspcat_20230101_v16_nodeb", 
+  cat_7 : "fspcat_20280101_v230819_nodeb", 
+  cat_8 : "fspcat_20430701_v16_nodeb", 
+  cat_9 : "fspcat_20430701_sk_nodeb", 
+  cat_10 : "fspcat_20430701_v270819_nodeb", 
+  cat_11 : "fspcat_baseline_20190522_v280819_nodeb", 
+  cat_12 : "fspcat_20230101_v280819_nodeb", 
+  cat_13 : "fspcat_20280101_v280819_nodeb", 
+  cat_14 : "fspcat_20430701_v280819_nodeb", 
+  cat_15: "2019",
+  tle_1 : "tle_test",
+	tle_2 : "tle_geo"  /// geo_tle.json	
+}
+
+function GUIset()
+{
+  var gui = new dat.GUI( { width: 300} );
+  // gui.domElement.id = 'datgui';
+
+	var folderSpacecraft = gui.addFolder( 'Catalogue option' );
+  var aaa={catalogName: ""}; ///cataloglist.cat_1
+	folderSpacecraft.add( aaa, 'catalogName', Object.values(cataloglist) ).onChange(
+		function( value )
+		{
+      // alert(value);
+      ///first clear all the catalog data
+      satcat.clear_catalog();
+      data_load = false;
+      debris_collection.removeAll();
+      debri_collection_radar.removeAll();
+
+      var satcat_logfile="";
+      var type="";
+      if(value.substring(0,6) == "fspcat")
+      {
+        type="kep";
+        satcat_logfile = data_path + "catalogue/" + value  + ".json";
+      }
+      else if(value.substring(0,3) == "tle")
+      {
+        type="tle";
+        satcat_logfile = data_path + "tle/" + value  + ".json";
+      }
+      else if(value.substring(0,4) == "2019") {
+        type="test";
+        satcat_logfile="http://satellite-api.herokuapp.com/test/test";
+      }
+
+      satcat.loadcatlog(type,satcat_logfile);
+      ///load the corresponding catalog files
+      // console.log("successfully loaded data");
+		}
+  );
+    
+  
+  
+}
 
 
-    // load the debris collection part where the points will be added to be plotted on the map
+// window.onload = function()
+// {
+  
+  satcat = new Catalogue();
+
+  GUIset();
+
+  clockViewModel = new Cesium.ClockViewModel();
+
+  // viewer_main = new Cesium.Viewer('main_viewer',{
+  //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
+  //   //     url : Cesium.buildModuleUrl('../Cesium/Assets/Textures/NaturalEarthII')
+  //   // }),
+  //   baseLayerPicker : false,
+  //   geocoder : false,
+  //   timeline: true,
+  //   clockViewModel : clockViewModel
+  //   });
+
+  var viewer_main = new Cesium.Viewer('cesiumContainer', {
+    //Use Cesium World Terrain
+    terrainProvider : Cesium.createWorldTerrain()
+});
+    
+    //Enable depth testing so things behind the terrain disappear.
+    viewer_main.scene.globe.depthTestAgainstTerrain = true;
+
+		
+		viewer_main.globe = true;
+		viewer_main.scene.globe.enableLighting = true;
+    viewer_main.clock.multiplier =  100 ;               // speed of the simulation
+    
+    var mycredit= new Cesium.Credit("Space Geodesy and Navigation Laboratory",'data/sgnl.png','https://www.ucl.ac.uk');
+    // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
+    viewer_main.scene.frameState.creditDisplay.addDefaultCredit(mycredit);
+    viewer_main.CreditDisplay = true;
+    viewer_main.scene.debugShowFramesPerSecond = true;
+    viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
+
+    start_jd = Cesium.JulianDate.now();
+    //start_jd = Cesium.JulianDate.fromIso8601("2019-01-01T13:00:00Z");
+    viewer_main.clock.startTime = Cesium.JulianDate.now(); ///It is in system loal time
+    viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+    viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+
+    
+
+  
+    // var satcat_log = "data/catalogue/fspcat_20230101.json";
+    // var tle_log = "data/tle/geo_tle.json";
+
+    // satcat.loadcatlog("kep",satcat_log);
+    // satcat.loadcatlog("tle",tle_log);
+    
+    /// debris_collection to store all the debris points
     debris_collection = new Cesium.PointPrimitiveCollection();
-    debris_collection = viewer.scene.primitives.add(debris_collection);
-    debris_collection.blendOption=Cesium.BlendOption.OPAQUE; // this speeds up the rendering by 2x
+    debri_collection_radar = new Cesium.PointPrimitiveCollection();
+    //By seting the blendOption to OPAQUE can improve the performance twice
+    debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
 
+    /// add debris_collection to the viewer_main
+    /// should organize debris in different orbtis to different collections
+    debris_collection = viewer_main.scene.primitives.add(debris_collection);
+    debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
 
-
-
-    // start plotting the points
     var colour = Cesium.Color.YELLOW;
-
+    
+    /// a timer is used to deal with the async reading of JSON
     var timename=setInterval(function(){
       if(satcat.data_load_complete == true
         && data_load == false)
         {
           //ShowDebris(viewer_main,mycatlog,4);
+          console.log(satcat.getNumberTotal());
           for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
           {
 
@@ -146,22 +407,15 @@
               colour = Cesium.Color.RED;
             }
 
+            //console.log(satcat.getDebriName([debrisID])); // undefined
+            //console.log(debrisID);
             debris_collection.add({
-            id: satcat.getDebriName[debrisID],
+            id: satcat.getDebriName([debrisID]),
             position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
             pixelSize: 3,
             color: colour
             // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-              });
-
-              /// for the radar_view
-              debri_collection_radar.add({
-                id: satcat.getDebriName[debrisID],
-                position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-                pixelSize: 4,
-                color: Cesium.Color.BLUE
-                // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-                  });     
+              });  
 
           }
 
@@ -170,7 +424,14 @@
         }
     },1000); /// allow sometime to load the Earth 
 
+  
+    viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
+    viewer_main.scene.preRender.addEventListener(update_debris_position);
+    ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
 
+
+
+//}
 
 
 
@@ -179,23 +440,7 @@
 
 
   
-  //   var center = Cesium.Cartesian3.fromDegrees(0,0,0);
-  //   debris_collection.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
-  //   debris_collection.blendOption = Cesium.BlendOption.OPAQUE;
-
-  //   //main(viewer);
-  //  // console.log(satellites.features[0].geometry.coordinates[1]);
-  //   for (const key of Object.keys(satellites)) {
-  //     var i = 0;
-  //     for (i; i<Object.keys(satellites.features).length; i++) { //this is what it should be 
-  //     //for (i; i<10; i++) { // just for testing
-  //       //console.log(satellites.features[i].geometry.coordinates[1]);
-  //       debris_collection.add({
-  //         color : Cesium.Color.CYAN,
-  //         position : new Cesium.Cartesian3.fromDegrees(satellites.features[i].geometry.coordinates[0], satellites.features[i].geometry.coordinates[1], satellites.features[i].geometry.coordinates[2]) // up
-  //       });
-  //     }
-  //   }
+ 
  
 
   </script>

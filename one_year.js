@@ -12,11 +12,11 @@ var satcat;
 var data_path="data/";
 
 
-function oneYearLoad() {
-    console.log("I have been clicked");
-    removeMapData();
-    main();
+// function oneYearLoad() {
+//     console.log("I have been clicked");
+//     removeMapData();
+//     main();
     
-    // remove the slider from the screen 
-    document.getElementById('slider').style.zIndex = "-1";
-}
+//     // remove the slider from the screen 
+//     document.getElementById('slider').style.zIndex = "-1";
+// }
