@@ -96,7 +96,16 @@
     });
     
     // initialise any new variables
-    var data_load;
+    var viewer_main, radar_viewer;
+    var start_jd;
+
+    var clockViewModel; /// the clockmodel for synchronisation of two views
+    var data_load=false;
+    var debris_collection;
+    var debri_collection_radar; /// it is the same as debris_collection
+
+    var satcat;
+    var data_path="data/";
 
     // set up an ajax route that returns the data from the catalogue class
     var orbit_type = "kep";
