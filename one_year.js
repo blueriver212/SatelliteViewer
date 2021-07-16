@@ -13,9 +13,11 @@ var data_path="data/";
 
 
 function removeMapData () {
-    viewer_main.PointPrimitiveCollection.removeAll();
-    //debris_collection.removeAll();
-    console.log('ive been clicked');
+    // viewer_main.debris_collection.removeAll();
+    // //debris_collection.removeAll();
+    // console.log('ive been clicked');
+    this.debris_kep=[];
+    this.data_load_complete=false;
   }
 
 function oneYearLoad() {
@@ -100,15 +102,12 @@ function oneYearLoad() {
                colour = Cesium.Color.RED;
              }
  
-             //console.log(satcat.getDebriName([debrisID])); // undefined
-             //console.log(debrisID);
              debris_collection.add({
              id: satcat.getDebriName([debrisID]),
              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
              pixelSize: 3,
              color: colour
-             // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-               });  
+             });  
  
            }
  
