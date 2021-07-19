@@ -186,8 +186,7 @@ class Catalogue
 						that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
 						that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
 					}
-					console.log("that.debris:", that.debris_kep);
-					console.log(that.debris_kep.length);
+					console.log("length of satellites data: ", that.debris_kep.length);
 					that.data_load_complete = true;
 				}
 			}

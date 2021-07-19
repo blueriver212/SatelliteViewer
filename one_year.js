@@ -13,9 +13,12 @@ function removeOtherData() {
   // this should be run when the user clicks just on the button from another web page
   
   // for the double screen
+  if (two_year_clicked = true) {
+    viewer2.entities.removeAll()
+    viewer2.destroy();
+  }
 
 
-  
   // for the hotspot data
   if (hotspotData = true) {
     viewer_main.dataSources.removeAll();
