@@ -1,5 +1,13 @@
+function removeSatellites() {
+  // this is only for when the hotspot maps are clicked on
+  satcat.clear_catalog();
+  data_load = false;
+  debris_collection.removeAll();
+  debri_collection_radar.removeAll();
+}
+
 function hotspotData () {
-    removeMapData();
+    removeSatellites();
     // remove the slider
     document.getElementById('slider').style.zIndex = "-1";
 
