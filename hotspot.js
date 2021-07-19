@@ -1,5 +1,5 @@
 function removeSatellites() {
-  // this is only for when the hotspot maps are clicked on
+  //this is only for when the hotspot maps are clicked on
   satcat.clear_catalog();
   data_load = false;
   debris_collection.removeAll();
@@ -7,20 +7,12 @@ function removeSatellites() {
 }
 
 function hotspotData () {
-    removeSatellites();
-    // remove the slider
-    document.getElementById('slider').style.zIndex = "-1";
 
-    // viewer_main.dataSources.add(
-    // Cesium.GeoJsonDataSource.load(
-    //   "../hex2.geojson",
-    //   {
-    //     stroke: Cesium.Color.HOTPINK,
-    //     fill: Cesium.Color.PINK.withAlpha(0.5),
-    //     fill: Cesium.Color.TRANSPARENT,
-    //     strokeWidth: 3,
-    //   }
-    // ))
+    if (count > 0) {
+    removeSatellites();
+    } else {
+    
+    hotspotData = true; // set this to true
 
     var promise = Cesium.GeoJsonDataSource.load( "../hex2.geojson");
 
@@ -88,4 +80,5 @@ function hotspotData () {
       //Display any errrors encountered while loading.
       window.alert(error);
     });
-}
+  } // end of else statement
+} // end of function

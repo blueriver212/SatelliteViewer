@@ -9,24 +9,24 @@ var debri_collection_radar; /// it is the same as debris_collection
 var satcat;
 
 
-// function removeMapData () {
-    
-//     // //debris_collection.removeAll();
-//     // console.log('ive been clicked');
-//     // this.debris_kep=[];
-//     // this.data_load_complete=false;
-//    // console.log('im going to remove the mpa data');
-//     //viewer_main.scene.primitives.remove(debris_collection);
-//     //satcat.clear_catalog();
-//     //data_load = false;
-//     viewer_main.scene.postUpdate.removeEventListener(update_debris_position);
-//     viewer_main.scene.primitives.remove(debris_collection);
+function removeOtherData() {
+  // this should be run when the user clicks just on the button from another web page
+  
+  // for the double screen
 
-//   }
+
+  
+  // for the hotspot data
+  if (hotspotData = true) {
+    viewer_main.dataSources.removeAll();
+  }
+}
 
 function numberOfLoads() {
+  removeOtherData();
   count = count + 1; 
   console.log(count);
+
 
   if (count >= 2) {
     // viewer_main.scene.postUpdate.removeEventListener(update_debris_position);
