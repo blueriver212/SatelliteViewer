@@ -14,7 +14,7 @@ function removeOtherData() {
   
   // for the double screen
   if (two_year_clicked == true) {
-    viewer2.removeAll()
+    //viewer2.removeAll()
     viewer2.destroy();
     document.getElementById('button2year').style.zIndex = -100;
   }
@@ -135,6 +135,6 @@ function oneYearLoad() {
  
      viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
      //viewer_main.scene.preRender.addEventListener(update_debris_position);
-     viewer_main.scene.postUpdate.addEventListener(update_debris_position);
+     //viewer_main.scene.postUpdate.addEventListener(update_debris_position);
   }
 
