@@ -32,74 +32,124 @@
   <script src="/Catalogue.js"></script>
   <script src = "/dat.gui.min.js"> </script> 
   <script src = "/KeplerianElement.js"> </script> 
+  <script src = "/style.css"> </script> 
 
 <style>
-    @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
-     html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
-          /* This here will allow the cesium container to fill the rest of the page */
-          display: flex; flex-direction: column; 
-      }
+@import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
+  html, body, #cesiumContainer {
+       width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
+       /* This here will allow the cesium container to fill the rest of the page */
+       display: flex; flex-direction: column; 
+   }
 
-      .science {
-        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9999;
-          /* This here will allow the cesium container to fill the rest of the page */
-          display: flex; flex-direction: column; 
-      }
-       .navbar {
-          z-index: 9998;
-        }
+   .science {
+    width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9999;
+      /* This here will allow the cesium container to fill the rest of the page */
+      display: flex; flex-direction: column; 
+  }
+   .navbar {
+      z-index: 9998;
+    }
 
-        #gui { position: absolute; top: 100px; }
-
+    #gui { position: absolute; top: 100px; }
 
         /* This is for the search bar */
-                * {
-          box-sizing: border-box;
-        }
+        * {
+      box-sizing: border-box;
+    }
 
-        /* Style the search field */
-        form.example input[type=text] {
-          padding: 10px;
-          font-size: 17px;
-          border: 1px solid grey;
-          float: left;
-          width: 80%;
-          background: #f1f1f1;
-          position: absolute;
-          left:2%;
-          top:10%;
-          width:10%;
-        }
+    /* Style the search field */
+    form.example input[type=text] {
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid grey;
+      float: left;
+      width: 80%;
+      background: #f1f1f1;
+      position: absolute;
+      left:2%;
+      top:10%;
+      width:10%;
+    }
 
-        /* Style the submit button */
-        form.example button {
-          float: left;
-          width: 20%;
-          padding: 10px;
-          background: #2196F3;
-          color: white;
-          font-size: 17px;
-          border: 1px solid grey;
-          border-left: none; /* Prevent double borders */
-          cursor: pointer;
-          position: absolute;
-          left:12%;
-          top:10%;
-          width:5%;
-        }
+    /* Style the submit button */
+    form.example button {
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none; /* Prevent double borders */
+      cursor: pointer;
+      position: absolute;
+      left:12%;
+      top:10%;
+      width:5%;
+    }
 
-        form.example button:hover {
-          background: #0b7dda;
-        }
+    form.example button:hover {
+      background: #0b7dda;
+    }
 
-        /* Clear floats */
-        form.example::after {
-          content: "";
-          clear: both;
-          display: table;
-         
-        }  
+    /* Clear floats */
+    form.example::after {
+      content: "";
+      clear: both;
+      display: table;
+     
+    }  
+
+    /* This is for the second search bar */
+     /* This is for the search bar */
+     * {
+      box-sizing: border-box;
+    }
+
+    /* Style the search field */
+    form.example1 input[type=text] {
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid grey;
+      float: left;
+      width: 80%;
+      background: #f1f1f1;
+      position: absolute;
+      left:2%;
+      top:60%;
+      width:10%;
+    }
+
+    /* Style the submit button */
+    form.example1 button {
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none; /* Prevent double borders */
+      cursor: pointer;
+      position: absolute;
+      left:12%;
+      top:60%;
+      width:5%;
+    }
+
+    form.example1 button:hover {
+      background: #0b7dda;
+    }
+
+    /* Clear floats */
+    form.example1::after {
+      content: "";
+      clear: both;
+      display: table;
+     
+    } 
+
 </style>
 </head>
 <body>
@@ -127,8 +177,11 @@
   </nav>
 
   <div id="cesiumContainer">
-    <div id="slider"></div>
     <form class="example" style="margin:auto;max-width:300px; z-index: 9000;">
+      <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
+      <button type="button" onclick="numberOfLoads()"><i class="fa fa-search"></i></button>
+    </form>
+    <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="numberOfLoads()"><i class="fa fa-search"></i></button>
     </form>

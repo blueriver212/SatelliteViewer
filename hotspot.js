@@ -11,6 +11,7 @@ function removeSatellites() {
     if (two_year_clicked = true) {
       viewer2.entities.removeAll()
       viewer2.destroy();
+      document.getElementById('button2year').style.zIndex = -100;
     }
   
 }

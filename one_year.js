@@ -16,8 +16,8 @@ function removeOtherData() {
   if (two_year_clicked == true) {
     viewer2.removeAll()
     viewer2.destroy();
+    document.getElementById('button2year').style.zIndex = -100;
   }
-
 
   // for the hotspot data
   if (hotspotData == true) {

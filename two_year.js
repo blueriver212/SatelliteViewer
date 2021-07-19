@@ -1,6 +1,9 @@
 function twoYear () {
 
     two_year_clicked = true;
+
+    // bring the search bar to the front
+    document.getElementById('button2year').style.zIndex = 9999;
     
     
     viewer2 = new Cesium.Viewer('cesiumContainer', {
