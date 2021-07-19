@@ -123,7 +123,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item active col-md-auto">
-          <a class="nav-link" href="#" onclick="oneYearLoad();">View 1 Year <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="#" onclick="numberOfLoads();">View 1 Year <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item col-md-auto">
           <a class="nav-link" href="#" onclick="twoYear();">Compare 2 Years</a>
@@ -143,7 +143,7 @@
     <div id="slider"></div>
     <form class="example" style="margin:auto;max-width:300px; z-index: 9999;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
-      <button type="button" onclick="oneYearLoad()"><i class="fa fa-search"></i></button>
+      <button type="button" onclick="numberOfLoads()"><i class="fa fa-search"></i></button>
     </form>
   </div>
 
@@ -235,7 +235,7 @@ function icrf_view_main(scene, time)
 
 
 //function update_debris_position(debris_set, viewer,mycatlog)
-function update_debris_position() // this seems to be the proble,
+function update_debris_position()
 {
     var debris_set = debris_collection;
     var viewer = viewer_main;
@@ -288,75 +288,95 @@ function update_debris_position() // this seems to be the proble,
 
 
 
- var cataloglist =
-{
-  cat_1 : "fspcat_test",  /// the catalogue file for test
-  cat_2 : "fspcat_20190522_v04_nodeb", //// baseline_fspcat_20190522_v04_nodeb.json
-	cat_3 : "fspcat_20280101_v04_nodeb", /// fspcat_20280101_v04_nodeb.json
-	cat_4 : "fspcat_20230101", /// fspcat_20230101.json
-  cat_5 : "fspcat_20230701", /// fspcat_20230701.json
-  cat_6 : "fspcat_20230101_v16_nodeb", 
-  cat_7 : "fspcat_20280101_v230819_nodeb", 
-  cat_8 : "fspcat_20430701_v16_nodeb", 
-  cat_9 : "fspcat_20430701_sk_nodeb", 
-  cat_10 : "fspcat_20430701_v270819_nodeb", 
-  cat_11 : "fspcat_baseline_20190522_v280819_nodeb", 
-  cat_12 : "fspcat_20230101_v280819_nodeb", 
-  cat_13 : "fspcat_20280101_v280819_nodeb", 
-  cat_14 : "fspcat_20430701_v280819_nodeb", 
-  cat_15: "2019",
-  tle_1 : "tle_test",
-	tle_2 : "tle_geo"  /// geo_tle.json	
-}
+//  var cataloglist =
+// {
+//   cat_1 : "fspcat_test",  /// the catalogue file for test
+//   cat_2 : "fspcat_20190522_v04_nodeb", //// baseline_fspcat_20190522_v04_nodeb.json
+// 	cat_3 : "fspcat_20280101_v04_nodeb", /// fspcat_20280101_v04_nodeb.json
+// 	cat_4 : "fspcat_20230101", /// fspcat_20230101.json
+//   cat_5 : "fspcat_20230701", /// fspcat_20230701.json
+//   cat_6 : "fspcat_20230101_v16_nodeb", 
+//   cat_7 : "fspcat_20280101_v230819_nodeb", 
+//   cat_8 : "fspcat_20430701_v16_nodeb", 
+//   cat_9 : "fspcat_20430701_sk_nodeb", 
+//   cat_10 : "fspcat_20430701_v270819_nodeb", 
+//   cat_11 : "fspcat_baseline_20190522_v280819_nodeb", 
+//   cat_12 : "fspcat_20230101_v280819_nodeb", 
+//   cat_13 : "fspcat_20280101_v280819_nodeb", 
+//   cat_14 : "fspcat_20430701_v280819_nodeb", 
+//   cat_15: "2019",
+//   tle_1 : "tle_test",
+// 	tle_2 : "tle_geo"  /// geo_tle.json	
+// }
 
-function GUIset()
-{
-  var gui = new dat.GUI( { width: 300} );
-  // gui.domElement.id = 'datgui';
+// function GUIset()
+// {
+//   var gui = new dat.GUI( { width: 300} );
+//   // gui.domElement.id = 'datgui';
 
-	var folderSpacecraft = gui.addFolder( 'Catalogue option' );
-  var aaa={catalogName: ""}; ///cataloglist.cat_1
-	folderSpacecraft.add( aaa, 'catalogName', Object.values(cataloglist) ).onChange(
-		function( value )
-		{
-      // alert(value);
-      ///first clear all the catalog data
-      satcat.clear_catalog();
-      data_load = false;
-      debris_collection.removeAll();
-      debri_collection_radar.removeAll();
+// 	var folderSpacecraft = gui.addFolder( 'Catalogue option' );
+//   var aaa={catalogName: ""}; ///cataloglist.cat_1
+// 	folderSpacecraft.add( aaa, 'catalogName', Object.values(cataloglist) ).onChange(
+// 		function( value )
+// 		{
+//       // alert(value);
+//       ///first clear all the catalog data
+//       satcat.clear_catalog();
+//       data_load = false;
+//       debris_collection.removeAll();
+//       debri_collection_radar.removeAll();
 
-      var satcat_logfile="";
-      var type="";
-      if(value.substring(0,6) == "fspcat")
-      {
-        type="kep";
-        satcat_logfile = data_path + "catalogue/" + value  + ".json";
-      }
-      else if(value.substring(0,3) == "tle")
-      {
-        type="tle";
-        satcat_logfile = data_path + "tle/" + value  + ".json";
-      }
-      else if(value.substring(0,4) == "2019") {
-        type="test";
-        satcat_logfile="http://satellite-api.herokuapp.com/2019";
-      }
+//       var satcat_logfile="";
+//       var type="";
+//       if(value.substring(0,6) == "fspcat")
+//       {
+//         type="kep";
+//         satcat_logfile = data_path + "catalogue/" + value  + ".json";
+//       }
+//       else if(value.substring(0,3) == "tle")
+//       {
+//         type="tle";
+//         satcat_logfile = data_path + "tle/" + value  + ".json";
+//       }
+//       else if(value.substring(0,4) == "2019") {
+//         type="test";
+//         satcat_logfile="http://satellite-api.herokuapp.com/2019";
+//       }
 
-      satcat.loadcatlog(type,satcat_logfile);
-      ///load the corresponding catalog files
-      // console.log("successfully loaded data");
-		}
-  );
+//       satcat.loadcatlog(type,satcat_logfile);
+//       ///load the corresponding catalog files
+//       // console.log("successfully loaded data");
+// 		}
+//   );
     
   
   
-}
+// }
 
  
   
 
   
+
+//   // viewer_main = new Cesium.Viewer('main_viewer',{
+//   //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
+//   //   //     url : Cesium.buildModuleUrl('../Cesium/Assets/Textures/NaturalEarthII')
+//   //   // }),
+//   //   baseLayerPicker : false,
+//   //   geocoder : false,
+//   //   timeline: true,
+//   //   clockViewModel : clockViewModel
+//   //   });
+
+//   var viewer_main = new Cesium.Viewer('cesiumContainer', {
+//     //Use Cesium World Terrain
+//     terrainProvider : Cesium.createWorldTerrain()
+// });
+
+
+
+
+// // GUIset();
 
   // viewer_main = new Cesium.Viewer('main_viewer',{
   //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
@@ -372,11 +392,6 @@ function GUIset()
     //Use Cesium World Terrain
     terrainProvider : Cesium.createWorldTerrain()
 });
-
-
-
-
-GUIset();
   </script>
 </body>
 </html>
