@@ -135,6 +135,6 @@ function oneYearLoad() {
  
      viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
      //viewer_main.scene.preRender.addEventListener(update_debris_position);
-     //viewer_main.scene.postUpdate.addEventListener(update_debris_position);
+     viewer_main.scene.postUpdate.addEventListener(update_debris_position);
   }
 
