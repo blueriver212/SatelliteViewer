@@ -51,9 +51,11 @@ function oneYearLoad() {
 
     // get the user's year from the search box
     var userOneYear = document.getElementById('1yearsearch').value;
-
+    var satcat_logfile = getURL(userOneYear);
+    
     type="test";
-    satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
+    //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
+    
 
     satcat.loadcatlog(type,satcat_logfile);
     

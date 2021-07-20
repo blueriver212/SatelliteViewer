@@ -7,7 +7,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>Hello World!</title>
   <script src="../node_modules/cesium/Build/Cesium/Cesium.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -159,7 +158,7 @@
           <a class="nav-link" href="#" onclick="twoYear();">Compare 2 Years</a>
         </li>
         <li class="nav-item col-md-auto">
-          <a class="nav-link" href="#" onclick="test();">Hotspot Analysis</a>
+          <a class="nav-link" href="#" onclick="hotspotData();">Hotspot Analysis</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" data-toggle="modal" data-target="#exampleModalLong">The Science Behind</a>
@@ -303,43 +302,20 @@ var viewer_main = new Cesium.Viewer('cesiumContainer', {
     //Use Cesium World Terrain
     terrainProvider : Cesium.createWorldTerrain()
 });
-  
-
-//   // viewer_main = new Cesium.Viewer('main_viewer',{
-//   //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
-//   //   //     url : Cesium.buildModuleUrl('../Cesium/Assets/Textures/NaturalEarthII')
-//   //   // }),
-//   //   baseLayerPicker : false,
-//   //   geocoder : false,
-//   //   timeline: true,
-//   //   clockViewModel : clockViewModel
-//   //   });
-
-//   var viewer_main = new Cesium.Viewer('cesiumContainer', {
-//     //Use Cesium World Terrain
-//     terrainProvider : Cesium.createWorldTerrain()
-// });
 
 
+function getURL(year) {
+  var url;
+  if (year <= 2019) {
+    url = "http://satellite-api.herokuapp.com/2019/" + year;
+  } 
+  else if (2023 < year <= 2025) {
+    url = "http://satellite-api.herokuapp.com/2025/" + year;
+  }
 
-
-// // GUIset();
-
-  // viewer_main = new Cesium.Viewer('main_viewer',{
-  //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
-  //   //     url : Cesium.buildModuleUrl('../Cesium/Assets/Textures/NaturalEarthII')
-  //   // }),
-  //   baseLayerPicker : false,
-  //   geocoder : false,
-  //   timeline: true,
-  //   clockViewModel : clockViewModel
-  //   });
-
-
-
-function test() {
-  hotspotData();
+  return url;
 }
+  
   </script>
 </body>
 </html>

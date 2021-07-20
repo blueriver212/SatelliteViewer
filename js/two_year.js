@@ -117,8 +117,9 @@ function twoYearLoads() {
     var userOneYear = document.getElementById('button2yearval').value;
 
     type="test";
-    satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
-
+    //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
+    satcat_logfile = getURL(userOneYear);
+    
     satcat2.loadcatlog(type,satcat_logfile);
     
     clockViewModel2 = new Cesium.ClockViewModel();
