@@ -6,37 +6,66 @@ var data_load=false;
 var debris_collection;
 var debri_collection_radar; /// it is the same as debris_collection
 
-var satcat;
-var data_path="data/";
+
+function removeOtherData() {
+  // this should be run when the user clicks just on the button from another web page
+  
+  // for the double screen
+  if (two_year_clicked == true) {
+    //viewer2.removeAll()
+    viewer2.destroy();
+    document.getElementById('button2year').style.zIndex = -100;
+  }
+
+  // for the hotspot data
+  if (hotspotData == true) {
+    viewer_main.dataSources.removeAll();
+  }
+}
+
+function numberOfLoads() {
+  two_year_clicked = false;
+  removeOtherData();
+  count = count + 1; 
+  console.log(count);
 
 
-// function oneYearLoad() {
-//     console.log("I have been clicked");
-//     removeMapData();
-//     main();
-    
-//     // remove the slider from the screen 
-//     document.getElementById('slider').style.zIndex = "-1";
-// }
+  if (count >= 2) {
+    // viewer_main.scene.postUpdate.removeEventListener(update_debris_position);
+    // viewer_main.scene.primitives.remove(debris_collection);
+    // oneYearLoad();
+      satcat.clear_catalog();
+      data_load = false;
+      debris_collection.removeAll();
+      debri_collection_radar.removeAll();
+      oneYearLoad();
+  } else {
+    oneYearLoad();
+  }
+
+}
 
 function oneYearLoad() {
-    
+
     satcat = new Catalogue();
-    
+
+    // get the user's year from the search box
+    var userOneYear = document.getElementById('1yearsearch').value;
+
     type="test";
-    satcat_logfile="http://satellite-api.herokuapp.com/test/test";
+    satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
 
     satcat.loadcatlog(type,satcat_logfile);
     
     clockViewModel = new Cesium.ClockViewModel();
  
      //Enable depth testing so things behind the terrain disappear.
-     viewer_main.scene.globe.depthTestAgainstTerrain = true;
+    viewer_main.scene.globe.depthTestAgainstTerrain = true;
  
          
-         viewer_main.globe = true;
-         viewer_main.scene.globe.enableLighting = true;
-     viewer_main.clock.multiplier =  100 ;               // speed of the simulation
+    viewer_main.globe = true;
+    viewer_main.scene.globe.enableLighting = true;
+    viewer_main.clock.multiplier =  100 ;               // speed of the simulation
      
      var mycredit= new Cesium.Credit("Space Geodesy and Navigation Laboratory",'data/sgnl.png','https://www.ucl.ac.uk');
      // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
@@ -51,15 +80,7 @@ function oneYearLoad() {
      viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
      viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
  
-     
- 
-   
-     // var satcat_log = "data/catalogue/fspcat_20230101.json";
-     // var tle_log = "data/tle/geo_tle.json";
- 
-     // satcat.loadcatlog("kep",satcat_log);
-     // satcat.loadcatlog("tle",tle_log);
-     
+          
      /// debris_collection to store all the debris points
      debris_collection = new Cesium.PointPrimitiveCollection();
      debri_collection_radar = new Cesium.PointPrimitiveCollection();
@@ -93,26 +114,96 @@ function oneYearLoad() {
                colour = Cesium.Color.RED;
              }
  
-             //console.log(satcat.getDebriName([debrisID])); // undefined
-             //console.log(debrisID);
              debris_collection.add({
              id: satcat.getDebriName([debrisID]),
              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
              pixelSize: 3,
              color: colour
-             // scaleByDistance : new Cesium.NearFarScalar(100.0, 4.0, 6.0E4, 0.8)
-               });  
+             });  
  
            }
  
            data_load=true;
            // clearInterval(timename); /// clear itself
-         }
+           }
+    
+          //  viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
+          //  viewer_main.scene.preRender.addEventListener(update_debris_position);
+          //  viewer_main.scene.postUpdate.addEventListener(update_debris_position);
+    
      },1000); /// allow sometime to load the Earth 
  
-   
      viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
-     viewer_main.scene.preRender.addEventListener(update_debris_position);
-     ///viewer_main.scene.preRender.raiseEvent(debris_collection, viewer_main,mycatlog);
-  
+     //viewer_main.scene.preRender.addEventListener(update_debris_position);
+     viewer_main.scene.postUpdate.addEventListener(update_debris_position);
+  }
+
+
+//function update_debris_position(debris_set, viewer,mycatlog)
+function update_debris_position()
+{
+    var debris_set = debris_collection;
+    var viewer = viewer_main;
+    var mycatlog = satcat;
+
+    time = viewer.clock.currentTime; /// the current computer time in TAI? not in UTC?
+    var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
+    
+    var time_utc = Cesium.JulianDate.now();
+    Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
+
+    // var t1_now = Cesium.JulianDate.now();
+    // var t2_now = Date.now();
+
+    var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
+    var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
+    
+    
+    var position_ecef = new Cesium.Cartesian3();
+    var points = debris_set._pointPrimitives;
+    var length = points.length;
+
+    // if (length > 0)
+    // {
+    //   console.log("point number in debris_set._pointPrimitives is loaded!");
+    // }
+
+    var pos_radar_view = new Cesium.Cartesian3();
+
+    for (var i = 0; i < length; ++i) 
+    {
+      var point = points[i];
+      //Cesium.Cartesian3.clone(point.position, position_ecef);
+      ///compute the position of debris according to time
+      if (Cesium.defined(icrfToFixed)) // date transformation
+      {
+        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        
+        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x*1000,positionAndVelocity.position.y*1000,positionAndVelocity.position.z*1000);
+        
+        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
+        
+        Cesium.Cartesian3.clone(position_ecef,pos_radar_view);
+
+        point.position = position_ecef; //// update back
+        
+      }
+  }
 }
+
+function icrf_view_main(scene, time) 
+{
+  if (scene.mode !== Cesium.SceneMode.SCENE3D) 
+  {
+      return;
+  }
+  var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+  if (Cesium.defined(icrfToFixed)) 
+  {
+      var camera = viewer_main.camera;
+      var offset = Cesium.Cartesian3.clone(camera.position);
+      var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
+      camera.lookAtTransform(transform, offset);
+  }
+}
+

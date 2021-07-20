@@ -15,50 +15,141 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"> </script>
 
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <!-- <script src="/cesium_maps.js"></script>
   
 
-  <script src="/two_year.js"></script>
+  
   <script src="/hotspot.js"></script>
  <script src="/main.js"></script> 
   <script src = "/dat.gui.min.js"> </script> -->
+  <script src="/hotspot.js"></script>
   <script src="/one_year.js"></script>
+  <script src="/two_year.js"></script>
   <script src = "/satellite.min.js"> </script> 
   <script src="/Catalogue.js"></script>
   <script src = "/dat.gui.min.js"> </script> 
   <script src = "/KeplerianElement.js"> </script> 
+  <script src = "/style.css"> </script> 
 
 <style>
-    @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
-     html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; 
-          /* This here will allow the cesium container to fill the rest of the page */
-          display: flex; flex-direction: column; 
-      }
-           /* .toolbar-left {
-            display: block;
-            position: absolute;
-            top: 5px;
-            left: 5px;
-        }  */
-        /* Turn on when a slider is needed */
-        /* #slider {
-            position: absolute;
-            height: 100%;
-            left: 50%;
-            top: 0px;
-            background-color: #D3D3D3;
-            width: 4px;
-            z-index: -1;
-        }
-        #slider:hover {
-            cursor: ew-resize;
-        } */
-        .navbar {
-          z-index: 9998;
-        }
+@import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
+  html, body, #cesiumContainer {
+       width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
+       /* This here will allow the cesium container to fill the rest of the page */
+       display: flex; flex-direction: column; 
+   }
 
-        #gui { position: absolute; top: 100px; }
+   .science {
+    width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9999;
+      /* This here will allow the cesium container to fill the rest of the page */
+      display: flex; flex-direction: column; 
+  }
+   .navbar {
+      z-index: 9998;
+    }
+
+    #gui { position: absolute; top: 100px; }
+
+        /* This is for the search bar */
+        * {
+      box-sizing: border-box;
+    }
+
+    /* Style the search field */
+    form.example input[type=text] {
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid grey;
+      float: left;
+      width: 80%;
+      background: #f1f1f1;
+      position: absolute;
+      left:2%;
+      top:10%;
+      width:10%;
+    }
+
+    /* Style the submit button */
+    form.example button {
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none; /* Prevent double borders */
+      cursor: pointer;
+      position: absolute;
+      left:12%;
+      top:10%;
+      width:5%;
+    }
+
+    form.example button:hover {
+      background: #0b7dda;
+    }
+
+    /* Clear floats */
+    form.example::after {
+      content: "";
+      clear: both;
+      display: table;
+     
+    }  
+
+    /* This is for the second search bar */
+     /* This is for the search bar */
+     * {
+      box-sizing: border-box;
+    }
+
+    /* Style the search field */
+    form.example1 input[type=text] {
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid grey;
+      float: left;
+      width: 80%;
+      background: #f1f1f1;
+      position: absolute;
+      left:2%;
+      top:60%;
+      width:10%;
+    }
+
+    /* Style the submit button */
+    form.example1 button {
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none; /* Prevent double borders */
+      cursor: pointer;
+      position: absolute;
+      left:12%;
+      top:60%;
+      width:5%;
+    }
+
+    form.example1 button:hover {
+      background: #0b7dda;
+    }
+
+    /* Clear floats */
+    form.example1::after {
+      content: "";
+      clear: both;
+      display: table;
+     
+    } 
+
 </style>
 </head>
 <body>
@@ -70,27 +161,73 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item active col-md-auto">
-          <a class="nav-link" href="#" onclick="oneYearLoad();">View 1 Year <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="#" onclick="numberOfLoads();">View 1 Year <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item col-md-auto">
           <a class="nav-link" href="#" onclick="twoYear();">Compare 2 Years</a>
         </li>
         <li class="nav-item col-md-auto">
-          <a class="nav-link" href="#" onclick="hotspotData();">Hotspot Analysis</a>
+          <a class="nav-link" href="#" onclick="test();">Hotspot Analysis</a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li> -->
-        <input type="text" class="form-control" placeholder="View a Single Year" aria-label="year" aria-describedby="basic-addon1">
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="modal" data-target="#exampleModalLong">The Science Behind</a>
+        </li>
       </ul>
     </div>
   </nav>
 
   <div id="cesiumContainer">
-    <div id="slider"></div>
+    <form class="example" style="margin:auto;max-width:300px; z-index: 9000;">
+      <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
+      <button type="button" onclick="whichMap()"><i class="fa fa-search"></i></button>
+    </form>
+    <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
+      <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
+      <button type="button" onclick="addSecondYearSatelliteData()"><i class="fa fa-search"></i></button>
+    </form>
   </div>
 
-    <script>
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="z-index: 9999;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+            </br>
+            <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>        </div>
+            </br>
+            <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>        </div>
+            </br>
+            <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>        </div>
+          <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <script>
+// stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+
+// make sure that the model popup is going to be the original place
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
     
 // author: Zhen Li
@@ -103,15 +240,23 @@ Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOi
 // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
 
 var viewer_main, radar_viewer;
+var viewer2;
 var start_jd;
 
 var clockViewModel; /// the clockmodel for synchronisation of two views
+var clockViewModel2;
 var data_load=false;
+var data_load2 = false;
 var debris_collection;
-var debri_collection_radar; /// it is the same as debris_collection
+var debris_collection2;
+//var debri_collection_radar; /// it is the same as debris_collection
 
 var satcat;
-var data_path="data/";
+var satcat2;
+
+var count = 0;
+var hotspot_data = false;
+var two_year_clicked = false;
 
 
 var options3D = {
@@ -145,146 +290,48 @@ var options2D = {
 };
 
 
-function icrf_view_main(scene, time) 
-{
-  if (scene.mode !== Cesium.SceneMode.SCENE3D) 
-  {
-      return;
-  }
-  var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
-  if (Cesium.defined(icrfToFixed)) 
-  {
-      var camera = viewer_main.camera;
-      var offset = Cesium.Cartesian3.clone(camera.position);
-      var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
-      camera.lookAtTransform(transform, offset);
-  }
-}
 
-
-//function update_debris_position(debris_set, viewer,mycatlog)
-function update_debris_position() // this seems to be the proble,
-{
-    var debris_set = debris_collection;
-    var viewer = viewer_main;
-    var mycatlog = satcat;
-
-    time = viewer.clock.currentTime; /// the current computer time in TAI? not in UTC?
-    var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
-    
-    var time_utc = Cesium.JulianDate.now();
-    Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
-
-    // var t1_now = Cesium.JulianDate.now();
-    // var t2_now = Date.now();
-
-    var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
-    var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
-    
-    
-    var position_ecef = new Cesium.Cartesian3();
-    var points = debris_set._pointPrimitives;
-    var length = points.length;
-
-    // if (length > 0)
-    // {
-    //   console.log("point number in debris_set._pointPrimitives is loaded!");
-    // }
-
-    var pos_radar_view = new Cesium.Cartesian3();
-
-    for (var i = 0; i < length; ++i) 
-    {
-      var point = points[i];
-      //Cesium.Cartesian3.clone(point.position, position_ecef);
-      ///compute the position of debris according to time
-      if (Cesium.defined(icrfToFixed)) // date transformation
-      {
-        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
-        
-        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x*1000,positionAndVelocity.position.y*1000,positionAndVelocity.position.z*1000);
-        
-        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
-        
-        Cesium.Cartesian3.clone(position_ecef,pos_radar_view);
-
-        point.position = position_ecef; //// update back
-        
-      }
-  }
-}
-
-
-
- var cataloglist =
-{
-  cat_1 : "fspcat_test",  /// the catalogue file for test
-  cat_2 : "fspcat_20190522_v04_nodeb", //// baseline_fspcat_20190522_v04_nodeb.json
-	cat_3 : "fspcat_20280101_v04_nodeb", /// fspcat_20280101_v04_nodeb.json
-	cat_4 : "fspcat_20230101", /// fspcat_20230101.json
-  cat_5 : "fspcat_20230701", /// fspcat_20230701.json
-  cat_6 : "fspcat_20230101_v16_nodeb", 
-  cat_7 : "fspcat_20280101_v230819_nodeb", 
-  cat_8 : "fspcat_20430701_v16_nodeb", 
-  cat_9 : "fspcat_20430701_sk_nodeb", 
-  cat_10 : "fspcat_20430701_v270819_nodeb", 
-  cat_11 : "fspcat_baseline_20190522_v280819_nodeb", 
-  cat_12 : "fspcat_20230101_v280819_nodeb", 
-  cat_13 : "fspcat_20280101_v280819_nodeb", 
-  cat_14 : "fspcat_20430701_v280819_nodeb", 
-  cat_15: "2019",
-  tle_1 : "tle_test",
-	tle_2 : "tle_geo"  /// geo_tle.json	
-}
-
-function GUIset()
-{
-  var gui = new dat.GUI( { width: 300} );
-  // gui.domElement.id = 'datgui';
-
-	var folderSpacecraft = gui.addFolder( 'Catalogue option' );
-  var aaa={catalogName: ""}; ///cataloglist.cat_1
-	folderSpacecraft.add( aaa, 'catalogName', Object.values(cataloglist) ).onChange(
-		function( value )
-		{
-      // alert(value);
-      ///first clear all the catalog data
-      satcat.clear_catalog();
-      data_load = false;
-      debris_collection.removeAll();
-      debri_collection_radar.removeAll();
-
-      var satcat_logfile="";
-      var type="";
-      if(value.substring(0,6) == "fspcat")
-      {
-        type="kep";
-        satcat_logfile = data_path + "catalogue/" + value  + ".json";
-      }
-      else if(value.substring(0,3) == "tle")
-      {
-        type="tle";
-        satcat_logfile = data_path + "tle/" + value  + ".json";
-      }
-      else if(value.substring(0,4) == "2019") {
-        type="test";
-        satcat_logfile="http://satellite-api.herokuapp.com/test/test";
-      }
-
-      satcat.loadcatlog(type,satcat_logfile);
-      ///load the corresponding catalog files
-      // console.log("successfully loaded data");
-		}
-  );
-    
-  
-  
-}
 
  
+function whichMap() {
+  // this is a function to test which map is currently being picked, to route the year to the right cesium container
+
+  if (two_year_clicked == false) {
+    console.log('we are either in year 1 view or hotspot');
+    numberOfLoads();
+  } else {
+    console.log('we should be in the second year view');
+    // now reupdate the map somehow
+    numberOfLoads();
+  }
+
+}
+
+var viewer_main = new Cesium.Viewer('cesiumContainer', {
+    //Use Cesium World Terrain
+    terrainProvider : Cesium.createWorldTerrain()
+});
   
 
-  
+//   // viewer_main = new Cesium.Viewer('main_viewer',{
+//   //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
+//   //   //     url : Cesium.buildModuleUrl('../Cesium/Assets/Textures/NaturalEarthII')
+//   //   // }),
+//   //   baseLayerPicker : false,
+//   //   geocoder : false,
+//   //   timeline: true,
+//   //   clockViewModel : clockViewModel
+//   //   });
+
+//   var viewer_main = new Cesium.Viewer('cesiumContainer', {
+//     //Use Cesium World Terrain
+//     terrainProvider : Cesium.createWorldTerrain()
+// });
+
+
+
+
+// // GUIset();
 
   // viewer_main = new Cesium.Viewer('main_viewer',{
   //   //   imageryProvider : Cesium.createTileMapServiceImageryProvider({
@@ -296,15 +343,11 @@ function GUIset()
   //   clockViewModel : clockViewModel
   //   });
 
-  var viewer_main = new Cesium.Viewer('cesiumContainer', {
-    //Use Cesium World Terrain
-    terrainProvider : Cesium.createWorldTerrain()
-});
 
 
-
-
-GUIset();
+function test() {
+  hotspotData();
+}
   </script>
 </body>
 </html>
