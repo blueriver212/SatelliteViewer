@@ -19,7 +19,7 @@ function removeOtherData() {
 
   // for the hotspot data
   if (hotspotData == true) {
-    viewer_main.dataSources.removeAll();
+    
   }
 }
 
@@ -39,9 +39,15 @@ function numberOfLoads() {
       debris_collection.removeAll();
       debri_collection_radar.removeAll();
       oneYearLoad();
-  } else {
+  } 
+  else {
     oneYearLoad();
+    document.getElementById('1yearsearch').value = '2019';
   }
+
+  if (hotspot_data == true) {
+    viewer_main.dataSources.removeAll();
+  } 
 
 }
 

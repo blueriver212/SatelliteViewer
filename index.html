@@ -306,7 +306,10 @@ var viewer_main = new Cesium.Viewer('cesiumContainer', {
 
 function getURL(year) {
   var url;
-  if (year <= 2019) {
+  if (!year) {
+    url = "http://satellite-api.herokuapp.com/2019/2019";
+  }
+  else if (year <= 2019) {
     url = "http://satellite-api.herokuapp.com/2019/" + year;
   } 
   else if (2023 < year <= 2025) {

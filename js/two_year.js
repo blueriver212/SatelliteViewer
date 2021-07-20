@@ -14,6 +14,11 @@ function twoYear () {
     two_year_clicked = true;
     twoYearcount = twoYearcount + 1;
 
+    if (hotspot_data == true) {
+      viewer_main.dataSources.removeAll();
+    }
+
+
 
     // bring the search bar to the front
     document.getElementById('button2year').style.zIndex = 9999;
@@ -107,9 +112,12 @@ function addSecondYearSatelliteData() {
   } else {
     twoYearLoads();
   }
+
+  
 }
 
 function twoYearLoads() {
+  
     
     satcat2 = new Catalogue();
 
@@ -119,7 +127,7 @@ function twoYearLoads() {
     type="test";
     //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
     satcat_logfile = getURL(userOneYear);
-    
+
     satcat2.loadcatlog(type,satcat_logfile);
     
     clockViewModel2 = new Cesium.ClockViewModel();
