@@ -19,6 +19,8 @@ function removeSatellites() {
 function hotspotData () {
     console.log('no');
 
+    two_year_clicked = false;
+
     removeSatellites();
   
     // hotspot_data = true; // set this to true

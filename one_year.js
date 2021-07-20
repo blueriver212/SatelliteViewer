@@ -6,8 +6,6 @@ var data_load=false;
 var debris_collection;
 var debri_collection_radar; /// it is the same as debris_collection
 
-var satcat;
-
 
 function removeOtherData() {
   // this should be run when the user clicks just on the button from another web page
@@ -26,6 +24,7 @@ function removeOtherData() {
 }
 
 function numberOfLoads() {
+  two_year_clicked = false;
   removeOtherData();
   count = count + 1; 
   console.log(count);
@@ -45,6 +44,7 @@ function numberOfLoads() {
   }
 
 }
+
 function oneYearLoad() {
 
     satcat = new Catalogue();
@@ -60,7 +60,7 @@ function oneYearLoad() {
     clockViewModel = new Cesium.ClockViewModel();
  
      //Enable depth testing so things behind the terrain disappear.
-     viewer_main.scene.globe.depthTestAgainstTerrain = true;
+    viewer_main.scene.globe.depthTestAgainstTerrain = true;
  
          
     viewer_main.globe = true;
@@ -137,4 +137,73 @@ function oneYearLoad() {
      //viewer_main.scene.preRender.addEventListener(update_debris_position);
      viewer_main.scene.postUpdate.addEventListener(update_debris_position);
   }
+
+
+//function update_debris_position(debris_set, viewer,mycatlog)
+function update_debris_position()
+{
+    var debris_set = debris_collection;
+    var viewer = viewer_main;
+    var mycatlog = satcat;
+
+    time = viewer.clock.currentTime; /// the current computer time in TAI? not in UTC?
+    var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
+    
+    var time_utc = Cesium.JulianDate.now();
+    Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
+
+    // var t1_now = Cesium.JulianDate.now();
+    // var t2_now = Date.now();
+
+    var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
+    var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
+    
+    
+    var position_ecef = new Cesium.Cartesian3();
+    var points = debris_set._pointPrimitives;
+    var length = points.length;
+
+    // if (length > 0)
+    // {
+    //   console.log("point number in debris_set._pointPrimitives is loaded!");
+    // }
+
+    var pos_radar_view = new Cesium.Cartesian3();
+
+    for (var i = 0; i < length; ++i) 
+    {
+      var point = points[i];
+      //Cesium.Cartesian3.clone(point.position, position_ecef);
+      ///compute the position of debris according to time
+      if (Cesium.defined(icrfToFixed)) // date transformation
+      {
+        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        
+        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x*1000,positionAndVelocity.position.y*1000,positionAndVelocity.position.z*1000);
+        
+        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
+        
+        Cesium.Cartesian3.clone(position_ecef,pos_radar_view);
+
+        point.position = position_ecef; //// update back
+        
+      }
+  }
+}
+
+function icrf_view_main(scene, time) 
+{
+  if (scene.mode !== Cesium.SceneMode.SCENE3D) 
+  {
+      return;
+  }
+  var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+  if (Cesium.defined(icrfToFixed)) 
+  {
+      var camera = viewer_main.camera;
+      var offset = Cesium.Cartesian3.clone(camera.position);
+      var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
+      camera.lookAtTransform(transform, offset);
+  }
+}
 

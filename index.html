@@ -179,7 +179,7 @@
   <div id="cesiumContainer">
     <form class="example" style="margin:auto;max-width:300px; z-index: 9000;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
-      <button type="button" onclick="numberOfLoads()"><i class="fa fa-search"></i></button>
+      <button type="button" onclick="whichMap()"><i class="fa fa-search"></i></button>
     </form>
     <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
@@ -240,22 +240,24 @@ Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOi
 // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
 
 var viewer_main, radar_viewer;
+var viewer2;
 var start_jd;
 
 var clockViewModel; /// the clockmodel for synchronisation of two views
+var clockViewModel2;
 var data_load=false;
+var data_load2 = false;
 var debris_collection;
 var debris_collection2;
-var debri_collection_radar; /// it is the same as debris_collection
+//var debri_collection_radar; /// it is the same as debris_collection
 
 var satcat;
-var data_path="data/";
+var satcat2;
 
 var count = 0;
 var hotspot_data = false;
 var two_year_clicked = false;
 
-var viewer2;
 
 var options3D = {
   homeButton : false,
@@ -288,78 +290,27 @@ var options2D = {
 };
 
 
-function icrf_view_main(scene, time) 
-{
-  if (scene.mode !== Cesium.SceneMode.SCENE3D) 
-  {
-      return;
-  }
-  var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
-  if (Cesium.defined(icrfToFixed)) 
-  {
-      var camera = viewer_main.camera;
-      var offset = Cesium.Cartesian3.clone(camera.position);
-      var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
-      camera.lookAtTransform(transform, offset);
-  }
-}
 
-
-//function update_debris_position(debris_set, viewer,mycatlog)
-function update_debris_position()
-{
-    var debris_set = debris_collection;
-    var viewer = viewer_main;
-    var mycatlog = satcat;
-
-    time = viewer.clock.currentTime; /// the current computer time in TAI? not in UTC?
-    var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
-    
-    var time_utc = Cesium.JulianDate.now();
-    Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
-
-    // var t1_now = Cesium.JulianDate.now();
-    // var t2_now = Date.now();
-
-    var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
-    var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
-    
-    
-    var position_ecef = new Cesium.Cartesian3();
-    var points = debris_set._pointPrimitives;
-    var length = points.length;
-
-    // if (length > 0)
-    // {
-    //   console.log("point number in debris_set._pointPrimitives is loaded!");
-    // }
-
-    var pos_radar_view = new Cesium.Cartesian3();
-
-    for (var i = 0; i < length; ++i) 
-    {
-      var point = points[i];
-      //Cesium.Cartesian3.clone(point.position, position_ecef);
-      ///compute the position of debris according to time
-      if (Cesium.defined(icrfToFixed)) // date transformation
-      {
-        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
-        
-        var position_eci = new Cesium.Cartesian3(positionAndVelocity.position.x*1000,positionAndVelocity.position.y*1000,positionAndVelocity.position.z*1000);
-        
-        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
-        
-        Cesium.Cartesian3.clone(position_ecef,pos_radar_view);
-
-        point.position = position_ecef; //// update back
-        
-      }
-  }
-}
 
  
-  
+function whichMap() {
+  // this is a function to test which map is currently being picked, to route the year to the right cesium container
 
+  if (two_year_clicked == false) {
+    console.log('we are either in year 1 view or hotspot');
+    numberOfLoads();
+  } else {
+    console.log('we should be in the second year view');
+    // now reupdate the map somehow
+    numberOfLoads();
+  }
+
+}
+
+var viewer_main = new Cesium.Viewer('cesiumContainer', {
+    //Use Cesium World Terrain
+    terrainProvider : Cesium.createWorldTerrain()
+});
   
 
 //   // viewer_main = new Cesium.Viewer('main_viewer',{
@@ -392,10 +343,7 @@ function update_debris_position()
   //   clockViewModel : clockViewModel
   //   });
 
-  var viewer_main = new Cesium.Viewer('cesiumContainer', {
-    //Use Cesium World Terrain
-    terrainProvider : Cesium.createWorldTerrain()
-});
+
 
 function test() {
   hotspotData();
