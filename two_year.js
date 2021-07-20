@@ -1,11 +1,17 @@
+var twoYearcount = 0;
+
 function twoYear () {
 
+    // this will stop more cesium containers opening every time 'Compare 2 Years' is clicked
     two_year_clicked = true;
+    twoYearcount = twoYearcount + 1;
+
 
     // bring the search bar to the front
     document.getElementById('button2year').style.zIndex = 9999;
     
     
+    if (twoYearcount < 2) {
     viewer2 = new Cesium.Viewer('cesiumContainer', {
         skyBox : false,
         skyAtmosphere : false,
@@ -21,12 +27,16 @@ function twoYear () {
             stroke: Cesium.Color.HOTPINK, 
             fill: Cesium.Color.PINK,
             strokeWidth: 3
-        }))
+        })) 
+    
+  }
+
 
 }
 
 function addSecondYearSatelliteData() {
 
+    
     satcat = new Catalogue();
 
     // get the user's year from the search box
