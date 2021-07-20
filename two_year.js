@@ -1,5 +1,13 @@
 var twoYearcount = 0;
 
+var viewer2;
+var start_jd2;
+
+var clockViewModel2; /// the clockmodel for synchronisation of two views
+var data_load2=false;
+var debris_collection2;
+var debri_collection_radar2; 
+
 function twoYear () {
 
     // this will stop more cesium containers opening every time 'Compare 2 Years' is clicked
@@ -90,9 +98,27 @@ function update_debris_position2()
   }
 }
 
+var count2 = 0;
 
 function addSecondYearSatelliteData() {
 
+  count2 = count2 + 1;
+
+  if (count2 >= 2) {
+    // viewer_main.scene.postUpdate.removeEventListener(update_debris_position);
+    // viewer_main.scene.primitives.remove(debris_collection);
+    // oneYearLoad();
+      satcat2.clear_catalog();
+      data_load2 = false;
+      debris_collection2.removeAll();
+      // debri_collection_radar2.removeAll();
+      twoYearLoads();
+  } else {
+    twoYearLoads();
+  }
+}
+
+function twoYearLoads() {
     
     satcat2 = new Catalogue();
 
@@ -121,11 +147,11 @@ function addSecondYearSatelliteData() {
      viewer2.scene.debugShowFramesPerSecond = true;
      viewer2.scene.frameState.creditDisplay.removeDefaultCredit();
  
-     start_jd = Cesium.JulianDate.now();
+     start_jd2 = Cesium.JulianDate.now();
      //start_jd = Cesium.JulianDate.fromIso8601("2019-01-01T13:00:00Z");
      viewer2.clock.startTime = Cesium.JulianDate.now(); ///It is in system loal time
      viewer2.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-     viewer2.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+     viewer2.timeline.zoomTo(start_jd2, Cesium.JulianDate.addSeconds(start_jd2, 86400, new Cesium.JulianDate()));
  
           
      /// debris_collection2 to store all the debris points
