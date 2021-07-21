@@ -91,15 +91,15 @@ class Catalogue
 		if(isat < this.debris_kep.length)
 		{
 			var aa = this.debris_kep[isat]["payload_operational_status"];
-			
-			if(aa == '+    ') {s = 1;} /// operational 
-			else if(aa == '-    ') 	{s = -1;} /// non-operational
-			else if(aa == 'P    ') 	{s = 0.5;} /// partially operational 
-			else if(aa == 'B    ') 	{s = 0.2;} /// backup/standby
-			else if(aa == 'S    ') 	{s = 0.8;} /// spare
-			else if(aa == 'X    ') 	{s = 0.3;} /// extended mission
-			else if(aa == 'D    ') 	{s = -0.2;} /// Decayed
-			else if(aa == '?    ')  {s = 0;} /// unknown	
+			console.log(aa);
+			if(aa == '+') {s = 1;} /// operational 
+			else if(aa == '-') 	{s = -1;} /// non-operational
+			else if(aa == 'P') 	{s = 0.5;} /// partially operational 
+			else if(aa == 'B') 	{s = 0.2;} /// backup/standby
+			else if(aa == 'S') 	{s = 0.8;} /// spare
+			else if(aa == 'X') 	{s = 0.3;} /// extended mission
+			else if(aa == 'D') 	{s = -0.2;} /// Decayed
+			else if(aa == '?')  {s = 0;} /// unknown	
 			else  /// not set
 			{
 				s = -1;

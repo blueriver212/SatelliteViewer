@@ -100,8 +100,8 @@ function oneYearLoad() {
      debris_collection = viewer_main.scene.primitives.add(debris_collection);
      debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
  
-     var colour = Cesium.Color.YELLOW;
-     
+     //var colour = Cesium.Color.YELLOW;
+    var colour; 
      /// a timer is used to deal with the async reading of JSON
      var timename=setInterval(function(){
        if(satcat.data_load_complete == true
@@ -120,6 +120,7 @@ function oneYearLoad() {
              else
              {
                colour = Cesium.Color.RED;
+               //console.log(operation_status);
              }
  
              debris_collection.add({
