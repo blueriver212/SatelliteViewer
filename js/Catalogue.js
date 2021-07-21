@@ -91,7 +91,7 @@ class Catalogue
 		if(isat < this.debris_kep.length)
 		{
 			var aa = this.debris_kep[isat]["payload_operational_status"];
-			console.log(aa);
+			//console.log(aa);
 			if(aa == '+') {s = 1;} /// operational 
 			else if(aa == '-') 	{s = -1;} /// non-operational
 			else if(aa == 'P') 	{s = 0.5;} /// partially operational 

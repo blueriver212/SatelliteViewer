@@ -444,8 +444,17 @@ function getURL(year) {
   else if (year <= 2019) {
     url = "http://satellite-api.herokuapp.com/2019/" + year;
   } 
+  else if (2019 < year <= 2023) {
+    url = "http://satellite-api.herokuapp.com/2023/" + year;
+  }
   else if (2023 < year <= 2025) {
     url = "http://satellite-api.herokuapp.com/2025/" + year;
+  }
+  else if (2025 < year <= 2027) {
+    url = "http://satellite-api.herokuapp.com/2027/" + year;
+  }
+  else if (2027 < year <= 2029) {
+    url = "http://satellite-api.herokuapp.com/2029/" + year;
   }
 
   return url;
