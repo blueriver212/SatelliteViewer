@@ -256,12 +256,4 @@ class Catalogue
 		}
 
 	}
-
-	/*convert from keplerian elements to twoline elements */
-	kep2tle(kep)
-	{
-
-	}
-
-
 }
