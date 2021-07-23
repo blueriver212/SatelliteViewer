@@ -16,6 +16,12 @@ function twoYear () {
 
     if (hotspot_data == true) {
       viewer_main.dataSources.removeAll();
+      viewer2 = new Cesium.Viewer('cesiumContainer', {
+        skyBox : false,
+        skyAtmosphere : false,
+        baseLayerPicker : false,
+        bottomContainer: false
+    });
     }
 
 
@@ -23,16 +29,18 @@ function twoYear () {
     // bring the search bar to the front
     document.getElementById('button2year').style.zIndex = 9999;
     
-    
-    if (twoYearcount < 2) {
+  if (!viewer2) {
+      
+  if (twoYearcount < 2) {
     viewer2 = new Cesium.Viewer('cesiumContainer', {
         skyBox : false,
         skyAtmosphere : false,
         baseLayerPicker : false,
         bottomContainer: false
     });
-
+    }
   }
+
 }
 
 function icrf_view_main2(scene, time) 
