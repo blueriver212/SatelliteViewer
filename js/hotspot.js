@@ -88,7 +88,7 @@ function loadHotspotData(dataSource) {
 
 function hotspotData () {
     document.getElementById('button1year').style.zIndex = -9999;  
-    document.getElementById('hotspot_toolbar').style.zIndex = 9999;  
+    document.getElementById('hotspot_toolbar').style.zIndex = 9990;  
 
 
     removeSatellites();

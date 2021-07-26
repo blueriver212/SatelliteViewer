@@ -7,56 +7,49 @@ var debris_collection;
 var debri_collection_radar; /// it is the same as debris_collection
 
 
-function removeOtherData() {
-  // this should be run when the user clicks just on the button from another web page
-  
-  // for the double screen
+function numberOfLoads() {
+  // this function is for when the main toolbar button is clicked
+  // first ensure that all elements are behind the main cesium container
+  document.getElementById('button1year').style.zIndex = 9999;
+  document.getElementById('hotspot_toolbar').style.zIndex = -9990;
+  document.getElementById('button2year').style.zindex = -100;
+  try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
+
+
+  one_year_clicked = true;
+
+  // remove the double screen
   if (two_year_clicked == true) {
-    //viewer2.removeAll()
     viewer2.destroy();
     document.getElementById('button2year').style.zIndex = -100;
-    document.getElementById('hotspot_toolbar').style.zIndex = -9990;  
-
+    two_year_clicked = false;
   }
 
-  // for the hotspot data
-  if (hotspotData == true) {
-    
-  }
-}
+  //remove the hotspot data if exists
+  try {viewer2.dataSources.removeAll()} catch (err) {console.log(err);}
 
-function numberOfLoads() {
-  two_year_clicked = false;
-  removeOtherData();
   count = count + 1; 
   console.log(count);
 
 
   if (count >= 2) {
-    // viewer_main.scene.postUpdate.removeEventListener(update_debris_position);
-    // viewer_main.scene.primitives.remove(debris_collection);
-    // oneYearLoad();
       satcat.clear_catalog();
       data_load = false;
       debris_collection.removeAll();
       debri_collection_radar.removeAll();
       oneYearLoad();
+      document.getElementById('1yearsearch').value = '2019';
   } 
   else {
     oneYearLoad();
     document.getElementById('1yearsearch').value = '2019';
   }
-
-  if (hotspot_data == true) {
-    viewer_main.dataSources.removeAll();
-  } 
-
 }
 
 function oneYearLoad() {
+    // this is only for the search button when clicked
 
     satcat = new Catalogue();
-
     // get the user's year from the search box
     var userOneYear = document.getElementById('1yearsearch').value;
     var satcat_logfile = getURL(userOneYear);

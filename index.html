@@ -216,7 +216,7 @@ body {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active col-md-auto">
+        <li class="nav-item col-md-auto">
           <a class="nav-link" href="#" onclick="numberOfLoads();">View 1 Year <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item col-md-auto">
@@ -241,7 +241,7 @@ body {
   </nav>
 
   <div id="cesiumContainer">
-    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9000;">
+    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9999;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="whichMap()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
@@ -421,8 +421,9 @@ var satcat;
 var satcat2;
 
 var count = 0;
-var hotspot_data = false;
+var one_year_clicked = false;
 var two_year_clicked = false;
+var hotspot_data = false;
 
 
 var options3D = {
@@ -461,21 +462,34 @@ var options2D = {
  
 function whichMap() {
   // this is a function to test which map is currently being picked, to route the year to the right cesium container
-
+  
+  document.getElementById('hotspot_toolbar').style.zIndex = -9990;
+  try {viewer_main.dataSources.removeAll();} catch (err) {console.log(err);}
+  
   if (two_year_clicked == false) {
     console.log('we are either in year 1 view or hotspot');
     numberOfLoads();
+    document.getElementById('button2year').style.zIndex = -100;
   } else {
     console.log('we should be in the second year view');
     // now reupdate the map somehow
-    numberOfLoads();
+    if (!satcat) {
+      oneYearLoad();
+    } else {
+      satcat.clear_catalog();
+      data_load = false;
+      debris_collection.removeAll();
+      debri_collection_radar.removeAll();
+      oneYearLoad();
+    }
   }
 
 }
 
 var viewer_main = new Cesium.Viewer('cesiumContainer', {
     //Use Cesium World Terrain
-    terrainProvider : Cesium.createWorldTerrain()
+    terrainProvider : Cesium.createWorldTerrain(),
+    shouldAnimate: true,
 });
 
 
@@ -487,10 +501,10 @@ function getURL(year) {
   else if (year <= 2019) {
     url = "http://satellite-api.herokuapp.com/2019/" + year;
   } 
-  else if (2019 < year <= 2023) {
-    url = "http://satellite-api.herokuapp.com/2023/" + year;
-  }
-  else if (2023 < year <= 2025) {
+  // else if (2019 < year <= 2023) {
+  //   url = "http://satellite-api.herokuapp.com/2023/" + year;
+  // }
+  else if (2019 < year <= 2025) {
     url = "http://satellite-api.herokuapp.com/2025/" + year;
   }
   else if (2025 < year <= 2027) {

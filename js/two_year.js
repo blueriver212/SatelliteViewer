@@ -14,39 +14,26 @@ function twoYear () {
     two_year_clicked = true;
     twoYearcount = twoYearcount + 1;
 
-    if (hotspot_data == true) {
-      viewer_main.dataSources.removeAll();
-      viewer2 = new Cesium.Viewer('cesiumContainer', {
-        skyBox : false,
-        skyAtmosphere : false,
-        baseLayerPicker : false,
-        bottomContainer: false
-    });
 
     if (document.getElementById('button1year').style.zIndex = -9999) {
       document.getElementById('button1year').style.zIndex = 9999;
       document.getElementById('hotspot_toolbar').style.zIndex = -9990;  
 
     }
-    }
-
-
 
     // bring the search bar to the front
-    document.getElementById('button2year').style.zIndex = 9999;
+    document.getElementById('button2year').style.zIndex = 9990;
     
-  if (!viewer2) {
-      
-  if (twoYearcount < 2) {
-    viewer2 = new Cesium.Viewer('cesiumContainer', {
+    try {viewer2 = new Cesium.Viewer('cesiumContainer', {
         skyBox : false,
         skyAtmosphere : false,
         baseLayerPicker : false,
         bottomContainer: false
     });
-    }
-  }
+  } catch (err) {console.log(err)};
 
+  try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
+ 
 }
 
 function icrf_view_main2(scene, time) 
