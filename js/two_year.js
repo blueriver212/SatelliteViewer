@@ -25,6 +25,8 @@ function twoYear () {
 
     if (document.getElementById('button1year').style.zIndex = -9999) {
       document.getElementById('button1year').style.zIndex = 9999;
+      document.getElementById('hotspot_toolbar').style.zIndex = -9990;  
+
     }
     }
 

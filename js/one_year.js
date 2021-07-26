@@ -15,6 +15,8 @@ function removeOtherData() {
     //viewer2.removeAll()
     viewer2.destroy();
     document.getElementById('button2year').style.zIndex = -100;
+    document.getElementById('hotspot_toolbar').style.zIndex = -9990;  
+
   }
 
   // for the hotspot data
