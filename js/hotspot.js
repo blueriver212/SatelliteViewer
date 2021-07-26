@@ -100,7 +100,20 @@ function hotspotData () {
 //} // end of function
 
 
-function hotspot2019 () {
+function hotspot2010 () {
+  viewer_main.dataSources.removeAll();
+  // this is just an example
+  var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
+  promise.then(function (dataSource) {loadHotspotData(dataSource)}).otherwise(function (error) {
+    //Display any errrors encountered while loading.
+    window.alert(error);
+  });
+}
+
+function hotspot2015 () {
+  viewer_main.dataSources.removeAll();
+
+  // this is just an example
   var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
   promise.then(function (dataSource) {loadHotspotData(dataSource)}).otherwise(function (error) {
     //Display any errrors encountered while loading.
