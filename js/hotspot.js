@@ -3,7 +3,6 @@ function removeSatellites() {
   
   // remove the search bar
 
-  document.getElementById('1yearsearch').style.zIndex = 1;  
   // this will remove all the data from the first cesium container
     if (count >= 1) {
       satcat.clear_catalog();
@@ -22,18 +21,19 @@ function removeSatellites() {
 }
 
 function hotspotData () {
+    document.getElementById('button1year').style.zIndex = -9999;  
+
 
     removeSatellites();
   
     hotspot_data = true; // set this to true
 
     var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
-
+  
     promise.then(function(dataSource) {
       viewer_main.dataSources.add(dataSource);
       var entities = dataSource.entities.values;
       var colorhash = {};
-
 
       console.log(entities.length);
       
@@ -86,6 +86,7 @@ function hotspotData () {
 
 
       }
+
       //var entities = dataSource.entities.features.Join_Count;
       //console.log(dataSource.entities.values);
     }).otherwise(function (error) {

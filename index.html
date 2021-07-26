@@ -241,7 +241,7 @@ body {
   </nav>
 
   <div id="cesiumContainer">
-    <form class="example" style="margin:auto;max-width:300px; z-index: 9000;">
+    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9000;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="whichMap()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
@@ -305,11 +305,12 @@ body {
 
     <h3 style="font-size:18px">Argument of Periapsis</h3>
     <p>The  argument  of  periapsis  (ω), or <i>perigee</i>, is the angle between the ascending node and the perigee directions, measured along the orbital plane. An value of 0&#176; means that the orbital body will be at its closest appraoch to the central body and the same moment that it crosses the plane of reference from the South to North. A value of 90&#176; means that the orbit body will reach periapsis at is north-most distance from the plane of reference.</p>
-    
     <h3 style="font-size:18px">True Anomaly</h3>
     <img src="./images/true_anomaly.JPG" alt="True Anomaly" ALIGN="right" style="width:25%; height: 25%;">
     <p>True Anomaly, V, specifies the location of a spacecraft in orbit. It is the angle betwen the perigee and the spacecraft's position vector emaasured in the direction of the satellite's motion. Of all of the orbital elements, the true anomaly is the only one that changes with time. </p>
 
+    </br>
+    </br>
 
     <p><b>Overall</b>, the size and shape of the orbit is determined by the eccentricity and semi-major axis. The orientation, from the inclincation and longitude of the ascending node. The position is the argument of periapsis, and the true anomaly. For each satellite, these values can be calculated for a given time, and vectors of trajectory can be calculated to visualise where the satellite is along its orbit. Therefore, on the maps, the animation is just a smoothed version, of the position constantly being calculted and updated.</p>
 
@@ -377,7 +378,7 @@ Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOi
 // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
 // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
 
-var viewer_main, radar_viewer;
+var viewer_main, radar_viewer, viewer_hotspot;
 var viewer2;
 var start_jd;
 

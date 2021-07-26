@@ -22,6 +22,10 @@ function twoYear () {
         baseLayerPicker : false,
         bottomContainer: false
     });
+
+    if (document.getElementById('button1year').style.zIndex = -9999) {
+      document.getElementById('button1year').style.zIndex = 9999;
+    }
     }
 
 
