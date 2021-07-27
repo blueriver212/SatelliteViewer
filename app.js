@@ -3,12 +3,18 @@ var path = require("path");
 var fs = require('fs');
 var app = express();
 
-var http = require('http');
+
+var http = require('http'); var https = require('https');
 
 var httpServer = http.createServer(app);
-var httpServerPort = 7000;
 
-httpServer.listen(httpServerPort);
+// port = 4480;
+//httpServer.listen(port);
+
+const port = process.env.PORT || 3000;
+
+httpServer.listen(port, () => console.log(`Listening on ${port}`));
+
 
 // this is what will appear when you just got to localhost:4443
 app.get('/',function (req,res) {
