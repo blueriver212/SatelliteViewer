@@ -35,7 +35,7 @@
   html, body, #cesiumContainer {
        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
        /* This here will allow the cesium container to fill the rest of the page */
-       display: flex; flex-direction: column;  font-family: 'Anonymous Pro', monospace;  
+       display: flex; flex-direction: column;   
    }
 
    .science {
@@ -146,36 +146,6 @@
      
     } 
 
-    /* *, *:before, *:after {
-  box-sizing: border-box;
-}
-
-.modal {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  display: none;
-  padding: 0 20px;
-  z-index: 2;
-}
-  
-.modal-inner {
-  background-color: #fff;
-  border-radius: 3px;
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 20px;
-}
-
-/* Placed on the body while a modal is open to prevent scrolling. */
-/* .showing-modal {
-  overflow: hidden;
-} */
-
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -235,11 +205,11 @@ body {
         </li>
       </ul>
       <ul class="nav navbar-nav ml-auto">
+        <!-- <li class="nav-item">
+          <a class="nav-link" data-toggle="modal" data-target="#modal_help">About</a>
+        </li> -->
         <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" data-target="#modal_help">Help</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" data-target="#modal_about">About</a>
+          <a class="nav-link" data-toggle="modal" data-target="#modal_about">Help</a>
         </li>
       </ul>
     </div>
@@ -330,18 +300,28 @@ body {
     </div>
   </div>
 
-  <div id="modal_help" class="modal" style="z-index: 9999;">
+  <div id="modal_about" class="modal" style="z-index: 9999;">
     <div class="modal-inner modal-lg">
-        <p> If you really need help then read these couple of paragraphs</p>
+      <center><h1>Help</h1></center>
+      <h3 style="font-size:18px">The Map Itself</h3>
+      <p> If you are struggling with how to zoom in on the map etc., click off this pop-up, and in the top-right of the map there is a '?' button. This will show you how to navigate the map.</p>
+      <p> In the bottom left of the map is the clock. Once a year is clicked, the map will plot the satellites movement from your current time. It will automatically be set at 100x normal time, please feel free to change this by sliding the green triangle left and right.</p>
+
+      <h3 style="font-size:18px">One Year</h3>
+      <p>This is the basic map template, you can enter the year of choice in the search bar at the top-left of the page. Make sure that the year you enter is in the format 'YYYY', ensuring that it is between 1957-2030. There will be a little loading period, as the data is plotted. Especially for years after 2020, as the map is trying to plot ~15,000 points!</p>
+      <h3 style="font-size:18px">Two Year</h3>
+      <p>The style of this map is the same as the One Year, apart from it allows the user to view two maps at the same time. The second search box that will appear will be for the second map. All the same rules above apply.</p>
+      <h3 style="font-size:18px">Hotspot</h3>
+      <p>This is a proof on concept to see if it is easier to understand how future space popualtions are changing. For each hexagon, simply the number of satellites are counted. As the simulation provides all of the new satellites, only the number at the equator will change. This will be updated in future versions.</p>
     </div>
   </div>
 
-
-  <div id="modal_about" class="modal" style="z-index: 9999;">
+<!-- This is for the help page if it is needed -->
+  <!-- <div id="modal_about" class="modal" style="z-index: 9999;">
     <div class="modal-inner modal-lg">
         <p> This is about this project, who I am, and why are we here?</p>
     </div>
-  </div>
+  </div> -->
   <script>
 // stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
 $(document).ready(function() {
