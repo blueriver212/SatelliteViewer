@@ -12,7 +12,7 @@ httpServer.listen(httpServerPort);
 
 // this is what will appear when you just got to localhost:4443
 app.get('/',function (req,res) {
-	res.send("Hello World from the App Server on Node port "+httpServerPort + " (mapped to Apache port 443)");
+	res.sendFile(path.join(__dirname+'/home.html'));
 });
 
 // adding functionality to log the requests

@@ -1,0 +1,104 @@
+<!-- This is for the welcome page to the website -->
+<!DOCTYPE html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<html lang = "en">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+          color: rgba(255,255,255,.75);
+        font-family: 'Anonymous Pro', monospace;  
+        background-color: rgb(25,25,25);    
+        }
+        
+        .bg {
+          /* The image used */
+          background-image: url("images/satellite.jpg");
+         
+
+          /* Full height */
+          height: 100%; 
+        
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+
+        /* Google Fonts */
+@import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
+
+.line-1{
+    position: relative;
+    top: 80%;  
+    width: 24em;
+    margin: 0 auto;
+    border-right: 2px solid rgba(255,255,255,.75);
+    font-size: 180%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);    
+}
+.line-2{
+    position: relative;
+    top: 80%;  
+    width: 24em;
+    margin: 0 auto;
+    border-right: 2px solid rgba(255,255,255,.75);
+    font-size: 180%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);    
+}
+/* Animation */
+.anim-typewriter{
+  animation: typewriter 3.5s steps(44) 1s 1 normal both,
+             blinkTextCursor 500ms steps(44) infinite normal;
+}
+.anim-typewriter-1{
+  animation: typewriter 3.5s steps(44) 1s 1 normal both,
+             blinkTextCursor 500ms steps(44) infinite normal;
+  display:none;
+}
+@keyframes typewriter{
+  from{width: 0;}
+  to{width: 24em;}
+}
+/* @keyframes blinkTextCursor{
+  from{border-right-color: rgba(255,255,255,.75);}
+  to{border-right-color: transparent;}
+} */
+.fadeButton {
+  display: none;
+}
+
+.fadeButton a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+        </style>
+        <body>
+            <div class="bg" style="z-index: 1;">
+                <button type="button" class="btn btn-dark fadeButton" style="position: absolute; top: 90%; left: 47.2%"><a href="http://localhost:7000/index.html">Enter Site</a></button>
+                <p class="line-1 anim-typewriter" style="z-index: 999;">Past, Present and Future Space Populations</p>
+                <p class="line-2 anim-typewriter-1" style="z-index: 999;">Satellites and Debris from 1957-2030</p>
+            </div>
+          
+        <script>
+            $(window).on('load', function() {
+                $('.fadeButton').delay(8500).fadeIn()
+            })
+            $(window).on('load', function() {
+                $('.anim-typewriter-1').delay(3900).fadeIn()
+            })
+        </script>
+        </body>
+        </html>
