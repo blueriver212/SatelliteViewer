@@ -94,7 +94,7 @@ function hotspotData () {
 
 function plotHotspotYear(year) {
   console.log('im in hotspot ' + year);
-  var file = "../hex/" + year + "_hex.geojson";
+  var file = "../hex/" + year + ".geojson";
   viewer_main.dataSources.removeAll();
   // this is just an example
   // var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
