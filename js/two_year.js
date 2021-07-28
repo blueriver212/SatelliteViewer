@@ -19,6 +19,7 @@ function twoYear () {
       document.getElementById('button1year').style.zIndex = 9999;
       document.getElementById('hotspot_toolbar').style.zIndex = -9990;  
       document.getElementById('hotspot_legend').style.zIndex = -9999;  
+      document.getElementById('satellite_legend').style.zIndex = 9999;  
 
 
     }

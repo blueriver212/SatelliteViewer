@@ -14,6 +14,7 @@ function numberOfLoads() {
   document.getElementById('hotspot_toolbar').style.zIndex = -9990;
   document.getElementById('button2year').style.zindex = -100;
   document.getElementById('hotspot_legend').style.zIndex = -9999;  
+  document.getElementById('satellite_legend').style.zIndex = 9999;  
 
   try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
 
