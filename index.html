@@ -181,6 +181,39 @@ body {
   margin: 0;
 }
 
+/* For the legend box colours */
+.box {
+  float: left;
+  height: 20px;
+  width: 20px;
+  margin-bottom: 15px;
+  border: 1px solid black;
+  clear: both;
+}
+
+.red {
+  background-color: red;
+}
+
+.forestgreen {
+  background-color: #228B22;
+}
+
+.gold {
+  background-color: #FFD700;
+}
+
+.orange {
+  background-color: #FFA500;
+}
+
+.darkorange {
+  background-color:#FF8C00;
+}
+
+.red {
+  background-color: #FF0000;
+}
 </style>
 </head>
 <body>
@@ -248,6 +281,18 @@ body {
         <input type="radio" name="options" id="option3" autocomplete="off" onclick="plotHotspotYear(2030);"> 2030
       </label>
     </div>
+
+    
+    <div class="card border-dark mb-3" id="hotspot_legend" style="max-width: 18rem; margin:auto; z-index: -9999;  position: absolute; left:2%; top:10%; background-color: #6C757D  ;">
+      <!-- <div class="card-header text"></div> -->
+      <div class="card-body text">
+        <h5 class="card-title">Number of Satellites</h5>
+        <div class="box forestgreen"></div><p class="card-text" style="white-space: pre;">  0 - 5</p>
+        <div class="box gold"></div><p class="card-text" style="white-space: pre;">  6-10</p>
+        <div class="box orange"></div><p class="card-text" style="white-space: pre;">  11-15</p>
+        <div class="box darkorange"></div><p class="card-text" style="white-space: pre;">  16-20</p>
+        <div class="box red"></div><p class="card-text" style="white-space: pre;">  20+</p>
+      </div>
   </div>
 
   

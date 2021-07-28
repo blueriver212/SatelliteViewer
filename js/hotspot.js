@@ -82,10 +82,13 @@ function loadHotspotData(dataSource) {
 function hotspotData () {
     document.getElementById('button1year').style.zIndex = -9999;  
     document.getElementById('hotspot_toolbar').style.zIndex = 9990;  
+    document.getElementById('hotspot_legend').style.zIndex = 9999;  
+
 
 
     removeSatellites();
     addbuttons();
+    plotHotspotYear(1990);
 
     hotspot_data = true; // set this to true
   } // end of else statement
