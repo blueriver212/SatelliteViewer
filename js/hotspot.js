@@ -31,7 +31,7 @@ function loadHotspotData(dataSource) {
   
   for (var i = 0; i < entities.length; i++) {
     var entity = entities[i];
-    console.log(entity.properties.OBJECTID);
+    // console.log(entity.properties.OBJECTID);
     // need the id of the variable to be able to loop back
     var ID = entity.properties.OBJECTID._value;
     var color = colorhash[ID];
