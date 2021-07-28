@@ -28,19 +28,16 @@ function loadHotspotData(dataSource) {
   viewer_main.dataSources.add(dataSource);
   var entities = dataSource.entities.values;
   var colorhash = {};
-
-  console.log(entities.length);
-  
   
   for (var i = 0; i < entities.length; i++) {
     var entity = entities[i];
-    //console.log(entity.properties);
-    //console.log(entity.properties.Join_Count._value);
+    console.log(entity.properties.OBJECTID);
     // need the id of the variable to be able to loop back
     var ID = entity.properties.OBJECTID._value;
     var color = colorhash[ID];
     var outcolor;
     var satellite_num = entity.properties.Join_Count._value;
+
 
     if (!color) {
       if (satellite_num < 5) {
@@ -78,11 +75,7 @@ function loadHotspotData(dataSource) {
     entity.polygon.outlineColor = outcolor;
     entity.polygon.extrudedHeight = entity.properties.num * 50000;
 
-
   }
-
-  //var entities = dataSource.entities.features.Join_Count;
-  //console.log(dataSource.entities.values);
 }
 
 
@@ -99,22 +92,13 @@ function hotspotData () {
 
 //} // end of function
 
-
-function hotspot2010 () {
+function plotHotspotYear(year) {
+  console.log('im in hotspot ' + year);
+  var file = "../hex/" + year + "_hex.geojson";
   viewer_main.dataSources.removeAll();
   // this is just an example
-  var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
-  promise.then(function (dataSource) {loadHotspotData(dataSource)}).otherwise(function (error) {
-    //Display any errrors encountered while loading.
-    window.alert(error);
-  });
-}
-
-function hotspot2015 () {
-  viewer_main.dataSources.removeAll();
-
-  // this is just an example
-  var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
+  // var promise = Cesium.GeoJsonDataSource.load( "../hex/hex2.geojson");
+  var promise = Cesium.GeoJsonDataSource.load(file);
   promise.then(function (dataSource) {loadHotspotData(dataSource)}).otherwise(function (error) {
     //Display any errrors encountered while loading.
     window.alert(error);
