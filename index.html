@@ -309,6 +309,7 @@ body {
             <!-- <div class="card-header text"></div> -->
             <div class="card-body text">
               <h5 class="card-title">Number of Satellites</h5>
+              <h5 class="card-title">in LEO, < 1000 km</h5>
               <div class="box forestgreen"></div><p class="card-text" style="white-space: pre;">  0 - 5</p>
               <div class="box gold"></div><p class="card-text" style="white-space: pre;">  6-10</p>
               <div class="box orange"></div><p class="card-text" style="white-space: pre;">  11-15</p>
@@ -364,6 +365,13 @@ body {
 
     <center><h2 style="font-size:22px">Predicting the future</h2></center>
 
+    <p> The satellite data has been produced by the UCL Future Space Population Study, with partnership with the UCL Orbit Dynamics Library (a codebase that has been developed solely for the purpose to study the impact of force modelling strategies).The outline of the methodology to produce a prediction of space is shown below. </p>
+
+    <center><img src="images/satellite_prediction.JPG" alt= "Satellite Prediction Methodology" ALIGN="center" style="width: 80%;"></center>
+    <p> </p>
+    <p>For each of the years that are visualised on this website, firstly, a user sets a baseline satellite catalogue, for this project, the baseline is 2019. In practical terms, this means that the true population of space is scraped from Celestrak.com and JSR (Jonathan’s Space Resort) and used for all future simulations. This information will also include the Keplerian Elements for each of the space objects – as described in the section above. </p>
+    <p>Furthermore, for future population simulations, the effects of on-orbit satellite fragmentation is also modelled. These are in three main categories: Explosion, On-Orbit Breakups (collisions etc.) or unknown cause. This is modelled through historical events from 1980s onwards. From 2019-2043, the number predicted is ~5.</p>
+
 
     </div>
   </div>
@@ -393,8 +401,9 @@ body {
       <!-- <p><b>There are three main parts:</b></p> -->
       <h3 style="font-size:18px">There are three main parts:</h3>
       <p>Firstly, you are able to look at what the space population from any year from 1957-2030. You can do this by entering the date into the search box. There are 2 main visualization techniques for this, a <i>one year view</i> and a <i>two year view</i>. These are accessed through the options on the navigation bar at the top of the webpage.</p>
-      <p>Secondly, the two year view will allow you to compare two seperate satellite catalogues at once, use the respective search boxes on the web page.</p>
+      <p>The two year view will allow you to compare two seperate satellite catalogues at once, use the respective search boxes on the web page.</p>
       <p>Thirdly, Low-Earth Orbit is of specific interest at the moment, with the recent rise of SpaceX and OneWeb etc., the <i>Hotspot Analysis</i> tab is testing a visualisation proof of concept for communicating the message. An important note: after 2019, when satellite orbits are predicted, they are all located at the equator. This will eventually be fixed, but the original simulation will have to be modified first.  </p>
+      <p>If your webpage is taking a little while to load, <strong> please be patient...</strong> sometimes, your browser is trying to load ~23,000 points on to a map! This could take a little time depending on your computer processing power...</p>
     </div>
   </div>
   <script>
