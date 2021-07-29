@@ -16,7 +16,7 @@ function numberOfLoads() {
   document.getElementById('hotspot_legend').style.zIndex = -9999;  
   document.getElementById('satellite_legend').style.zIndex = 9999;  
 
-  try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
+  // try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
 
 
   one_year_clicked = true;
@@ -34,28 +34,21 @@ function numberOfLoads() {
   count = count + 1; 
   console.log(count);
 
-  oneYearLoad();
+  // remove and restart the data every time the 1 year button is clicked
+    if (!satcat === true) {
+      oneYearLoad();
+      console.log('im on the wrong side');
 
-  if (count >= 2) {
+    } else {
       satcat.clear_catalog();
       data_load = false;
       debris_collection.removeAll();
       debri_collection_radar.removeAll();
+      console.log('im in the if statement');
       oneYearLoad();
-      //document.getElementById('1yearsearch').value = '2019';
-  } 
-  else {
-    // oneYearLoad();
-    try {satcat.clear_catalog();
-      data_load = false;
-      debris_collection.removeAll();
-      debri_collection_radar.removeAll();
-      oneYearLoad();} catch (err) {console.log(err)};
-    //document.getElementById('1yearsearch').value = '2019';
+    }
   }
 
-
-}
 
 function oneYearLoad() {
     // this is only for the search button when clicked
