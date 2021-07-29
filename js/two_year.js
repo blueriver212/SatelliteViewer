@@ -31,7 +31,8 @@ function twoYear () {
         skyBox : false,
         skyAtmosphere : false,
         baseLayerPicker : false,
-        bottomContainer: false
+        bottomContainer: false,
+        shouldAnimate: true,
     });
   } catch (err) {console.log(err)};
 
