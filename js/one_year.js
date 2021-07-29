@@ -41,11 +41,16 @@ function numberOfLoads() {
       debris_collection.removeAll();
       debri_collection_radar.removeAll();
       oneYearLoad();
-      document.getElementById('1yearsearch').value = '2019';
+      //document.getElementById('1yearsearch').value = '2019';
   } 
   else {
-    oneYearLoad();
-    document.getElementById('1yearsearch').value = '2019';
+    // oneYearLoad();
+    try {satcat.clear_catalog();
+      data_load = false;
+      debris_collection.removeAll();
+      debri_collection_radar.removeAll();
+      oneYearLoad();} catch (err) {console.log(err)};
+    //document.getElementById('1yearsearch').value = '2019';
   }
 }
 
