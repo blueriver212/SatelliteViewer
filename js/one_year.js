@@ -34,6 +34,7 @@ function numberOfLoads() {
   count = count + 1; 
   console.log(count);
 
+  oneYearLoad();
 
   if (count >= 2) {
       satcat.clear_catalog();
@@ -52,6 +53,8 @@ function numberOfLoads() {
       oneYearLoad();} catch (err) {console.log(err)};
     //document.getElementById('1yearsearch').value = '2019';
   }
+
+
 }
 
 function oneYearLoad() {
