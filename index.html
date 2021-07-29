@@ -330,11 +330,11 @@ body {
     </br>
       <center><h2 style="font-size:22px">Mapping a Satellite's Location</h2></center>
       <img src="./images/geocentric_coordinate_system.JPG" alt="Geocentric Coordinate System" ALIGN="right" style="width:25%; height: 25%;">
-      <p>Firstly, to understand how the track of a satellite is calculated, one must understand geocentric coordinate system. The figure to the right shows essentially an X, Y, Z coordinate system, whereby 0,0,0 is the center of the earth. For every satellite, at each given time, their location can be calculated based on their X and Y value, and then their height from the center of the earth.  </p>
+      <p>Firstly, to understand how the track of a satellite is calculated, one must understand geocentric coordinate systems. The figure to the right shows essentially an X, Y, Z coordinate system, whereby 0,0,0 is the center of the earth. For every satellite, at each given time, their location can be calculated based on their X and Y value, and then their height from the center of the earth.  </p>
       <p>This is slightly useful for "snap-shots" of what space would look like (such as the hotspot mapping), however, as satellites often travel at speeds of 3, 900 km/hr, it is important to understand their trajectories. The science behind this is called <i>orbital mechanics.</i></p>
       </br>
       <p> Sir Isaac Newton, proposed three laws of motion. The first, describes how when an object travels in a given direction, it continues at a constant velocity, unless it is acted upon by an external force. Satellites in space will experience many forces against it, including gravity, atmospheric drag, thrust etc. However, these are all relatively small forces, creating a scerario where the satellite will orbit the earth.
-        This is extremely important, as if the forward momentu  of the satellite is too small, it will speed past and not enter orbit, however, if too small, the object will be pulled down to earth and crash.
+        This is extremely important, as if the forward momentum of the satellite is too small, it will speed past and not enter orbit, however, if too small, the object will be pulled down to earth and crash.
       </p>
 
       <p>Therefore, if we assume that once a satellite is in orbit, it will remain on a continous trajectory. Then there are a number of orbital qualities to be able to calculate the position in said orbit.</p>
@@ -342,22 +342,22 @@ body {
      <center><img src="./images/semi_major_axis.JPG" style="height: 35%; width: 35%;"><img src="./images/satellite_angles.JPG" alt="Satellite Orbital Parameters" style="height: 35%; width: 35%;"></center>
 
      <h3 style="font-size:18px">Semi-Major Axis and Eccentricity</h3>
-    <p>The figure above reveals the orbital path for two objects, F1 and F2, where a and b are the semi-major and semi-minor axies respectively. This is a line segment that runs between the center of both F1 and F2, then ends at the orbit. The furthest distance on the elliptical point is called the apogee, and the shortest is the perigee. </p>
-    <p>These lengths can be used to measure the eccentricity, will refers to the shape of the orbit. <i>Eccentricity (e)</i> is represented by a value between 0 and 1, where, e = 0 is a complete circle. </p> 
+    <p>The figure above reveals the orbital path for two objects, F1 and F2, where a and b are the semi-major and semi-minor axes respectively. This is a line segment that runs between the center of both F1 and F2, then ends at the orbit. The furthest distance on the elliptical point is called the apogee, and the shortest is the perigee. </p>
+    <p>These lengths can be used to measure the eccentricity, will refers to the shape of the orbit. <i>Eccentricity (e)</i> is represented by a value between 0 and 1, where, e = 0 is a perfect circle. </p> 
 
     <h3 style="font-size:18px">Inclination</h3>
     <img src="./images/satellite_inclination.JPG" alt="Satellite Inclination" ALIGN="right" style="width:25%; height: 25%;">
 
-    <p>After the size and the shape of the orbit has been calculated, next we have to understand the tilt compared to the equator of the earth, this is called the inclination. The inclination angle, is the path relative to the equator, if a satellite's path is directly above th equator, the inclination is 0. If a satellite orbits from the north pole to the south pole (geographic), the inclination is 90 degrees.</p>
+    <p>After the size and the shape of the orbit has been calculated, next we have to understand the tilt compared to the equator of the earth, this is called the inclination. The inclination angle, is the path relative to the equator, if a satellite's path is directly above the equator, the inclination is 0. If a satellite orbits from the north pole to the south pole (geographic), the inclination is 90 degrees.</p>
 
     <h3 style="font-size:18px">RAAN</h3>
-    <p>The Right Ascension of the Ascending Node (RAAN, Ω) is the angle in the equator plane taken from the First Point of Aires, which is the vernal equinox, which does not rotate with the earth. In simpler terms, this is the exact point where the satellite's orit crosses the equatorial plane.</p>
+    <p>The Right Ascension of the Ascending Node (RAAN, Ω) is the angle in the equator plane taken from the First Point of Aires, which is the vernal equinox, which does not rotate with the earth. In simpler terms, this is the exact point where the satellite's orbit crosses the equatorial plane.</p>
 
     <h3 style="font-size:18px">Argument of Periapsis</h3>
     <p>The  argument  of  periapsis  (ω), or <i>perigee</i>, is the angle between the ascending node and the perigee directions, measured along the orbital plane. An value of 0&#176; means that the orbital body will be at its closest appraoch to the central body and the same moment that it crosses the plane of reference from the South to North. A value of 90&#176; means that the orbit body will reach periapsis at is north-most distance from the plane of reference.</p>
     <h3 style="font-size:18px">True Anomaly</h3>
     <img src="./images/true_anomaly.JPG" alt="True Anomaly" ALIGN="right" style="width:25%; height: 25%;">
-    <p>True Anomaly, V, specifies the location of a spacecraft in orbit. It is the angle betwen the perigee and the spacecraft's position vector emaasured in the direction of the satellite's motion. Of all of the orbital elements, the true anomaly is the only one that changes with time. </p>
+    <p></br>True Anomaly, V, specifies the location of a spacecraft in orbit. It is the angle betwen the perigee and the spacecraft's position vector emaasured in the direction of the satellite's motion. Of all of the orbital elements, the true anomaly is the only one that changes with time. </p>
 
     </br>
     </br>
@@ -366,11 +366,12 @@ body {
 
     <center><h2 style="font-size:22px">Predicting the Future</h2></center>
 
-    <p> The satellite data has been produced by the UCL Future Space Population Study, with partnership with the UCL Orbit Dynamics Library (a codebase that has been developed solely for the purpose to study the impact of force modelling strategies).The outline of the methodology to produce a prediction of space is shown below. </p>
+    <p> The satellite data has been produced by the UCL Future Space Population Study, with partnership with the UCL Orbit Dynamics Library (a codebase that has been developed solely for the purpose to study the impact of force modelling strategies). The outline of the methodology to produce a prediction of space is shown below. </p>
 
     <center><img src="images/satellite_prediction.JPG" alt= "Satellite Prediction Methodology" ALIGN="center" style="width: 80%;"></center>
     <p> </p>
-    <p>For each of the years that are visualised on this website, firstly, a user sets a baseline satellite catalogue, for this project, the baseline is 2019. In practical terms, this means that the true population of space is scraped from Celestrak.com and JSR (Jonathan’s Space Resort) and used for all future simulations. This information will also include the Keplerian Elements for each of the space objects – as described in the section above. </p>
+    <p>For each of the years that are visualised on this website, firstly, a user sets a baseline satellite catalogue, for this project, the baseline is 2019. In practical terms, this means that the true population of space is scraped from Celestrak.com and JSR (Jonathan’s Space Report) and used for all future simulations. This information will also include the Keplerian Elements for each of the space objects – as described in the section above. </p>
+    <p>To simulate future launches, mostly, data would be scraped from different web sources on future launch dates. For operational objects in low earth orbit ( <1000 km), the mission end-date corresponds to the known decay rate, if not known that the object remains operational. </p>
     <p>Furthermore, for future population simulations, the effects of on-orbit satellite fragmentation is also modelled. These are in three main categories: Explosion, On-Orbit Breakups (collisions etc.) or unknown cause. This is modelled through historical events from 1980s onwards. From 2019-2043, the number predicted is ~5.</p>
 
 
@@ -398,12 +399,12 @@ body {
     <div class="modal-inner modal-lg">
       <center><h1>Future Space Population Visualiser</h1></center>
       <h3 style="font-size:18px">A few things to note</h3>
-      <p>This website has been built to try to visualise and present a complex dataset of past, presend and future satellite and debris populations, to try and spread the message of how space, especially low earth orbit, is filling up... <i>extremely quickly.</i></p>
+      <p>This website has been built to try to visualise and present a complex dataset of past, present and future satellite and debris populations. The aim is to try and spread the message of how space, especially Low-Earth Orbit, is filling up... <i>extremely quickly.</i></p>
       <!-- <p><b>There are three main parts:</b></p> -->
       <h3 style="font-size:18px">There are three main parts:</h3>
-      <p>Firstly, you are able to look at what the space population from any year from 1957-2030. You can do this by entering the date into the search box. There are 2 main visualization techniques for this, a <i>one year view</i> and a <i>two year view</i>. These are accessed through the options on the navigation bar at the top of the webpage.</p>
+      <p>Firstly, you are able to view the space population from any year from 1957-2030, by entering the date into the search box. There are 2 main visualization techniques for this, a <i>one year view</i> and a <i>two year view</i>. These are accessed through the options on the navigation bar at the top of the webpage.</p>
       <p>The two year view will allow you to compare two seperate satellite catalogues at once, use the respective search boxes on the web page.</p>
-      <p>Thirdly, Low-Earth Orbit is of specific interest at the moment, with the recent rise of SpaceX and OneWeb etc., the <i>Hotspot Analysis</i> tab is testing a visualisation proof of concept for communicating the message. An important note: after 2019, when satellite orbits are predicted, they are all located at the equator. This will eventually be fixed, but the original simulation will have to be modified first.  </p>
+      <p>Thirdly, Low-Earth Orbit is of specific interest at the moment, with the recent rise of SpaceX and OneWeb etc., the <i>Hotspot Analysis</i> tab is a visualisation proof of concept for communicating the problem. An important note: after 2019, when satellite orbits are predicted, all of the future launches start at the equator. This will eventually be fixed, but the original simulation will have to be modified first.</p>
       <p>If your webpage is taking a little while to load, <strong> please be patient...</strong> sometimes, your browser is trying to load ~23,000 points on to a map! This could take a little time depending on your computer processing power...</p>
     </div>
   </div>
