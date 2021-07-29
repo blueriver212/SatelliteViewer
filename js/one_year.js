@@ -29,8 +29,9 @@ function numberOfLoads() {
   }
 
   //remove the hotspot data if exists
-  try {viewer2.dataSources.removeAll()} catch (err) {console.log(err);}
+  try {viewer_main.dataSources.removeAll()} catch (err) {console.log(err);}
 
+  
   count = count + 1; 
   console.log(count);
 
