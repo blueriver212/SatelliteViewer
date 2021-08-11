@@ -123,6 +123,7 @@ class Catalogue
 		// first need to turn remove the search button and then turn it into a spinner
 		document.getElementById('button1year').style.zIndex = -2000;
 		document.getElementById('spinner').style.zIndex = 9999;
+		document.getElementById('dropdown').style.zIndex = -9999;
 
 		console.log("reading JSON")
 		var that = this;
@@ -196,6 +197,7 @@ class Catalogue
 				// send the spinner to the back and bring forward the search bar
 				document.getElementById('button1year').style.zIndex = 9998;
 				document.getElementById('spinner').style.zIndex = -9999;		
+				document.getElementById('dropdown').style.zIndex = 9999;		
 			} // END OF DATA
  		}) // end of ajax
 

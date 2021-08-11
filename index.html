@@ -89,6 +89,24 @@
       background: #0b7dda;
     }
 
+    /* For the drop down option to search for country */
+    form.drop button{
+      float: left;
+      width: 20%;
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      font-size: 17px;
+      border: 1px solid grey;
+      border-left: none; /* Prevent double borders */
+      cursor: pointer;
+      position: absolute;
+      left:2%;
+      top: 16%;
+      width:15%;
+      background-color: #65737e ;
+    }
+
     /* Clear floats */
     form.example::after {
       content: "";
@@ -220,10 +238,6 @@ body {
 .darkorange {
   background-color:#FF8C00;
 }
-
-.red {
-  background-color: #FF0000;
-}
 </style>
 </head>
 <body>
@@ -261,7 +275,7 @@ body {
   <div id="cesiumContainer">
     <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9998;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
-      <button type="button" onclick="whichMap()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
+      <button type="button" onclick="whichMap(1)" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
     <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
@@ -269,17 +283,25 @@ body {
     </form>
 
     <!-- For the spinner when needed -->
-    <!-- <div class="d-flex justify-content-center" id ="spinner" style="z-index: -9999;">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-    </div> -->
-
     <form class="example" id="spinner" style="margin:auto;max-width:300px; z-index: -9999;">
       <button class=" btn btn-primary" type="button" style="background-color: #65737e ;" disabled>
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span>
         <span class="sr-only">Loading...</span>
       </button>
+    </form>
+
+    <!-- For the dropdown box -->
+    <form class="drop" id="dropdown" style="margin:auto;max-width:300px; z-index: 9999;">
+      <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Search By Country (Optional)
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#" onclick="whichMap(2)">US</a>
+        <a class="dropdown-item" href="#">CIS (Russia)</a>
+        <a class="dropdown-item" href="#">UK</a>
+        <!-- <div class="dropdown-divider"></div> -->
+        <a class="dropdown-item" href="#">Iran</a>
+      </div>
     </form>
 
     <div class="btn-group btn-group-toggle" id = "hotspot_toolbar" data-toggle="buttons" style="margin:auto;max-width:50%; z-index: -9999;  position: absolute; left:37%; top:10%; width:5%;">
@@ -434,7 +456,7 @@ $(document).ready(function() {
       // return false;
       // get value of the box 
       if (document.getElementById('1yearsearch').value != null) {
-        whichMap();
+        whichMap(1);
       } else {
         alert('You have not entered a year!');
       }
@@ -551,7 +573,9 @@ var options2D = {
 
 
  
-function whichMap() {
+function whichMap(val) {
+
+  // if (val = 1) {
   // this is a function to test which map is currently being picked, to route the year to the right cesium container
   
   document.getElementById('hotspot_toolbar').style.zIndex = -9990;
@@ -574,7 +598,7 @@ function whichMap() {
       debri_collection_radar.removeAll();
       oneYearLoad();
     }
-  }
+  } 
 
 }
 
