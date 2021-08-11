@@ -120,6 +120,10 @@ class Catalogue
 	/// read in the debris data in the format of JSON
 	loadcatlog(orbit_type,jsonFile)
 	{
+		// first need to turn remove the search button and then turn it into a spinner
+		document.getElementById('button1year').style.zIndex = -2000;
+		document.getElementById('spinner').style.zIndex = 9999;
+
 		console.log("reading JSON")
 		var that = this;
 		/// Here we used sync mode which will cause Cesium an issue in the loading of Earth
@@ -189,9 +193,11 @@ class Catalogue
 					console.log("length of satellites data: ", that.debris_kep.length);
 					that.data_load_complete = true;
 				}
-			}
-
-		})
+				// send the spinner to the back and bring forward the search bar
+				document.getElementById('button1year').style.zIndex = 9998;
+				document.getElementById('spinner').style.zIndex = -9999;		
+			} // END OF DATA
+ 		}) // end of ajax
 
 
 

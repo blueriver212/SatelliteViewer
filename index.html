@@ -259,13 +259,27 @@ body {
   </nav>
 
   <div id="cesiumContainer">
-    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9999;">
+    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9998;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="whichMap()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
     <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="addSecondYearSatelliteData()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
+    </form>
+
+    <!-- For the spinner when needed -->
+    <!-- <div class="d-flex justify-content-center" id ="spinner" style="z-index: -9999;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+    </div> -->
+
+    <form class="example" id="spinner" style="margin:auto;max-width:300px; z-index: -9999;">
+      <button class=" btn btn-primary" type="button" style="background-color: #65737e ;" disabled>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ></span>
+        <span class="sr-only">Loading...</span>
+      </button>
     </form>
 
     <div class="btn-group btn-group-toggle" id = "hotspot_toolbar" data-toggle="buttons" style="margin:auto;max-width:50%; z-index: -9999;  position: absolute; left:37%; top:10%; width:5%;">
@@ -321,7 +335,8 @@ body {
         </div>  
       </div>
     </div>
-  
+
+ 
 
 
   <div id="modal" class="modal" style="z-index: 9999;">
