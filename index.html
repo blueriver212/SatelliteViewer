@@ -29,8 +29,6 @@
 /* Google Fonts */
 @import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
 
-
-
 @import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
   html, body, #cesiumContainer {
        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
@@ -281,6 +279,9 @@ body {
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="addSecondYearSatelliteData()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
+    <form class="SatelliteInfo" id = "satelliteInfo" style="margin:auto;width:900px; z-index: -100;">
+      <input id="satelliteInfoBox" type="text" placeholder="Select a Satellite" name="search" style="width:900px">
+    </form>
 
     <!-- For the spinner when needed -->
     <form class="example" id="spinner" style="margin:auto;max-width:300px; z-index: -9999;">
@@ -432,20 +433,20 @@ body {
   </div>
 
 <!-- This is for the help page if it is needed -->
-  <div id="modal_load" class="modal" style="z-index: 9999;">
+  <!-- <div id="modal_load" class="modal" style="z-index: 9999;">
     <div class="modal-inner modal-lg">
       <center><h1>Future Space Population Visualiser</h1></center>
       <h3 style="font-size:18px">A few things to note</h3>
       <p>This website has been built to try to visualise and present a complex dataset of past, present and future satellite and debris populations. The aim is to try and spread the message of how space, especially Low-Earth Orbit, is filling up... <i>extremely quickly.</i></p>
-      <!-- <p><b>There are three main parts:</b></p> -->
       <h3 style="font-size:18px">There are three main parts:</h3>
       <p>Firstly, you are able to view the space population from any year from 1957-2030, by entering the date into the search box. There are 2 main visualization techniques for this, a <i>one year view</i> and a <i>two year view</i>. These are accessed through the options on the navigation bar at the top of the webpage.</p>
       <p>The two year view will allow you to compare two separate satellite catalogues at once, use the respective search boxes on the web page.</p>
       <p>Thirdly, Low-Earth Orbit is of specific interest at the moment, with the recent rise of SpaceX and OneWeb etc., the <i>Hotspot Analysis</i> tab is a visualisation proof of concept for communicating the problem. An important note: after 2019, when satellite orbits are predicted, all of the future launches start at the equator. This will eventually be fixed, but the original simulation will have to be modified first.</p>
       <p>If your webpage is taking a little while to load, <strong> please be patient...</strong> sometimes, your browser is trying to load ~23,000 points on to a map! This could take a little time depending on your computer processing power...</p>
     </div>
-  </div>
+  </div> -->
   <script>
+
 
 
 // stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
@@ -501,22 +502,12 @@ $('#open').click(function (event) {
   openModal($modal);
 });
 
-
 $(document).ready(function(){
         $("#modal_load").modal('show');
     });
 
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
-    
-// author: Zhen Li
-// email: hpulizhen@163.com
-
-// Grant CesiumJS access to your ion assets
-
-// Z. Li's Cesium ion access token
-// Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
-// Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmJiODMwMi1mODRiLTQ2YTEtODMzZC0zYTVlY2Q5YmQxMjMiLCJpZCI6OTkxMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NTI4Mzg1NH0.gvjcqfwCYVBcmZ11Jzr-k5Q13QXZ6qGVer9WSXOs9K8';
 
 var viewer_main, radar_viewer, viewer_hotspot;
 var viewer2;
@@ -588,7 +579,6 @@ function whichMap(val) {
   } else {
     console.log('we should be in the second year view');
     
-    // now reupdate the map somehow
     if (!satcat) {
       oneYearLoad();
     } else {

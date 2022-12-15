@@ -74,14 +74,17 @@ class Catalogue
 	{
 		if(isat < this.debris_kep.length)
 		{
-			return this.debris_kep[isat]["rso_name"];
-			//console.log(this.debris_kep[isat]);
+			return this.debris_kep[isat]["RSO_name"];
 		}
 		else if(isat >= this.debris_kep.length 
 			&& isat < this.getNumberTotal() )
 		{
 			return this.debris_tle[isat-this.debris_kep.length]["name"];
 		}
+	}
+
+	getCatalogue() {
+		return this.debris_kep;
 	}
 	
 	//ref: http://www.celestrak.com/satcat/status.php
@@ -90,7 +93,7 @@ class Catalogue
 		var s = -1;
 		if(isat < this.debris_kep.length)
 		{
-			var aa = this.debris_kep[isat]["payload_operational_status"];
+			var aa = this.debris_kep[isat]["payload_operational_status"].trim(); // fsp adds white space to the payload status
 			//console.log(aa);
 			if(aa == '+') {s = 1;} /// operational 
 			else if(aa == '-') 	{s = -1;} /// non-operational
@@ -109,13 +112,25 @@ class Catalogue
 			&& isat < this.getNumberTotal() )
 		{
 			s = 0;
-			// return this.debris_tle[isat-this.debris_kep.length]["name"];
-			// tle  does not include operational status
 		}
 
 		return s;
 
 	}
+
+	getSatelliteName(isat) 
+	{
+		return this.debris_kep[isat]["RSO_name"].trim();
+	}
+
+	returnSatelliteInformationAsString(isat) 
+	{
+		var satellite_info = `Name: ${this.debris_kep[isat]["RSO_name"].trim()}, 
+		Owner: ${this.debris_kep[isat]["owner"].trim()}`;
+		return satellite_info;
+	}
+
+
 
 	/// read in the debris data in the format of JSON
 	loadcatlog(orbit_type,jsonFile)
@@ -125,7 +140,6 @@ class Catalogue
 		document.getElementById('spinner').style.zIndex = 9999;
 		document.getElementById('dropdown').style.zIndex = -9999;
 
-		console.log("reading JSON")
 		var that = this;
 		/// Here we used sync mode which will cause Cesium an issue in the loading of Earth
 		/// possible solution is to integrate Cesium viewer in the Catalogue class 
@@ -133,46 +147,19 @@ class Catalogue
 			url: jsonFile,
 			type: "GET",
 			dataType: "json",
-			async: true,
+			async: false,
 			success: function(data) { /// a callback function to parse the data into the class object
+				
 				if(orbit_type == "tle")
 				{
-				that.debris_tle = data.debris;
-				console.log("I am loading tle data tle using ajax");
-				console.log(that.debris_tle.length);
-				that.data_load_complete = true;
+					that.debris_tle = data.debris;
+
+					that.data_load_complete = true;
 				}
 
 				else if(orbit_type == "kep")
 				{
-				that.debris_kep = data.debris;
-				console.log(data.debris);
-				var isat=-1;
-				for(isat = 0;isat < that.debris_kep.length; isat++)
-				{
-					var idebri = that.debris_kep[isat];
-					
-					var epoch_of_orbit_str = idebri["epoch_of_orbit"];
-					
-					var t0_str = epoch_of_orbit_str.split("-");
-					var month = parseInt(t0_str[1])-1;
-					that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);
-					
-					that.debris_kep[isat]['semi_major_axis'] = parseFloat(idebri['semi_major_axis']);
-					that.debris_kep[isat]["eccentricity"] = parseFloat(idebri["eccentricity"]);
-					that.debris_kep[isat]["inclination"] = parseFloat(idebri["inclination"]);
-					that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
-					that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
-					that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
-				}
-				console.log("I am loading kep data using ajax");
-				console.log(that.debris_kep.length);
-				that.data_load_complete = true;
-				}
-
-				else if(orbit_type == "test") {
-					console.log("data:", data);
-					that.debris_kep = data;
+					that.debris_kep = data.debris;
 					var isat=-1;
 					for(isat = 0;isat < that.debris_kep.length; isat++)
 					{
@@ -182,27 +169,24 @@ class Catalogue
 						
 						var t0_str = epoch_of_orbit_str.split("-");
 						var month = parseInt(t0_str[1])-1;
-						that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);
-						
+						that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);				
 						that.debris_kep[isat]['semi_major_axis'] = parseFloat(idebri['semi_major_axis']);
 						that.debris_kep[isat]["eccentricity"] = parseFloat(idebri["eccentricity"]);
 						that.debris_kep[isat]["inclination"] = parseFloat(idebri["inclination"]);
-						that.debris_kep[isat]["raan"] = parseFloat(idebri["raan"]);
+						that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
 						that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
 						that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
 					}
-					console.log("length of satellites data: ", that.debris_kep.length);
+
 					that.data_load_complete = true;
 				}
+
 				// send the spinner to the back and bring forward the search bar
 				document.getElementById('button1year').style.zIndex = 9998;
 				document.getElementById('spinner').style.zIndex = -9999;		
 				document.getElementById('dropdown').style.zIndex = 9999;		
 			} // END OF DATA
  		}) // end of ajax
-
-
-
 	}
 	
 	/// compute the positon of debris in eci
@@ -215,24 +199,19 @@ class Catalogue
 			var positionAndVelocity={position:{x:0,y:0,z:0},velocity:{x:0,y:0,z:0}};
 			//return this.debris_kep[isat];
 			var kep = new KeplerianElement();
-			kep.setElements(idebri['semi_major_axis'],idebri["eccentricity"],
-							// idebri["inclination"],idebri["RAAN"],
-							idebri["inclination"],idebri["raan"],
-							idebri["argument_of_perigee"],idebri["true_anomaly"]
+
+			kep.setElements(idebri['semi_major_axis'],
+							idebri["eccentricity"],
+							idebri["inclination"],
+							idebri["RAAN"],
+							idebri["argument_of_perigee"],
+							idebri["true_anomaly"]
 							);
 			
-			
-			var epoch_of_orbit_str = idebri["epoch_of_orbit"];
-			
-			// var t0_str = epoch_of_orbit_str.split("-");
-			// var month = parseInt(t0_str[1])-1;
-			// var tt0 = new Date(t0_str[0],month,t0_str[2]);
-			
-			var tt0 = idebri["epoch_of_orbit"];
-			
+			var tt0 = new Date(idebri["epoch_of_orbit"]);
+	
 			var time_diff = (time - tt0)/1000.0; /// in sec
 			
-			// var time_diff = 100;
 			kep.updateElements(time_diff);
 			var pv = kep.getStateVector();
 			positionAndVelocity.position.x = pv[0];
@@ -245,8 +224,8 @@ class Catalogue
 			
 			return positionAndVelocity;
 		}
-		else if(isat >= this.debris_kep.length /// using SGP4 propagation
-			&& isat < this.getNumberTotal() )
+
+		else if(isat >= this.debris_kep.length && isat < this.getNumberTotal()) // using spg4 propogation
 		{
 			var idebri = this.debris_tle[isat-this.debris_kep.length];
 			var line1,line2;
@@ -262,6 +241,5 @@ class Catalogue
 		{
 			alert("unknown debri index!!!");
 		}
-
 	}
 }

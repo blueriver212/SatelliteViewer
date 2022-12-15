@@ -155,8 +155,8 @@ KeplerianElement.prototype =
 
      var tran_t = this.get_tran_from_ecan(ecan_t, this.e);
 
-		 //update the true anomaly
-		 this.nu = tran_t;
+		//update the true anomaly
+		this.nu = tran_t;
 
 	},
 
@@ -166,12 +166,12 @@ KeplerianElement.prototype =
 		// eccentric anomaly
 		var E = this.get_ecan_from_tran(this.e, this.nu);
 		var cosE = Math.cos(E);
-  	var sinE = Math.sin(E);
+  		var sinE = Math.sin(E);
 
-  	// Perifocal coordinates
+  		// Perifocal coordinates
 		var fac = Math.sqrt ( (1.0-this.e)*(1.0+this.e) );
 		var R = this.a*(1.0-this.e*cosE);  // Distance
-  	var V = Math.sqrt(this.GM*this.a)/R;    // Velocity
+  		var V = Math.sqrt(this.GM*this.a)/R;    // Velocity
 
 		var r = new THREE.Vector3(this.a*(cosE-this.e), this.a*fac*sinE, 0.0);
 		var v = new THREE.Vector3(-V*sinE,+V*fac*cosE,0.0);
@@ -189,21 +189,18 @@ KeplerianElement.prototype =
 		tm2.multiply(tm3);
 
 		// Transformation to reference system (Gaussian vectors)
+		r.applyMatrix4(tm2);
+		v.applyMatrix4(tm2);
+		//PQW = R_z(-Omega) * R_x(-i) * R_z(-omega);
 
-  	r.applyMatrix4(tm2);
-  	v.applyMatrix4(tm2);
-  	//PQW = R_z(-Omega) * R_x(-i) * R_z(-omega);
+		//r = PQW*r;
+		//v = PQW*v;
 
-  	//r = PQW*r;
-  	//v = PQW*v;
+		var pos_vel = new Array(6);
+		pos_vel[0] = r.x;pos_vel[1] = r.y;pos_vel[2] = r.z;
+		pos_vel[3] = v.x;pos_vel[4] = v.y;pos_vel[5] = v.z;
 
-  	var pos_vel = new Array(6);
-  	pos_vel[0] = r.x;pos_vel[1] = r.y;pos_vel[2] = r.z;
-  	pos_vel[3] = v.x;pos_vel[4] = v.y;pos_vel[5] = v.z;
-
-
-
-  	// State vector
+  		// State vector
 		return pos_vel;
 
 	},
@@ -216,56 +213,51 @@ KeplerianElement.prototype =
 		var sqrt1me2 = Math.sqrt(1.0 - this.e * this.e);
 		var ecan = this.get_ecan_from_tran(this.e, this.nu);
 		var cos_ecan = Math.cos(ecan);
-    var sin_ecan = Math.sin(ecan);
+    	var sin_ecan = Math.sin(ecan);
 
         // Compute the magnitude of the Gaussian vectors at the required point
-    var gaussX = this.a * (cos_ecan - this.e);    // Magnitude of
-    var gaussY = this.a * sqrt1me2 * sin_ecan; // Gaussian vectors
+		var gaussX = this.a * (cos_ecan - this.e);    // Magnitude of
+		var gaussY = this.a * sqrt1me2 * sin_ecan; // Gaussian vectors
 
-    var XYdotcommon = Math.sqrt(this.GM / this.a) / (1.0 - this.e * cos_ecan);
+		var XYdotcommon = Math.sqrt(this.GM / this.a) / (1.0 - this.e * cos_ecan);
 
 
-    var gaussXdot = -sin_ecan * XYdotcommon;           // Gaussian vel.
-    var gaussYdot = cos_ecan * sqrt1me2 * XYdotcommon; // components
+		var gaussXdot = -sin_ecan * XYdotcommon;           // Gaussian vel.
+		var gaussYdot = cos_ecan * sqrt1me2 * XYdotcommon; // components
 
-    var cos_inc = Math.cos(this.i);
-    var sin_inc = Math.sin(this.i);
+		var cos_inc = Math.cos(this.i);
+		var sin_inc = Math.sin(this.i);
 
-    var cos_argp = Math.cos(this.mu);
-    var cos_raan = Math.cos(this.OMEG);
+		var cos_argp = Math.cos(this.mu);
+		var cos_raan = Math.cos(this.OMEG);
 
-    var sin_argp = Math.sin(this.mu);
-    var sin_raan = Math.sin(this.OMEG);
+		var sin_argp = Math.sin(this.mu);
+		var sin_raan = Math.sin(this.OMEG);
 
-    var cc = cos_argp * cos_raan;
-    var cs = cos_argp * sin_raan;
-    var sc = sin_argp * cos_raan;
-    var ss = sin_argp * sin_raan;
+		var cc = cos_argp * cos_raan;
+		var cs = cos_argp * sin_raan;
+		var sc = sin_argp * cos_raan;
+		var ss = sin_argp * sin_raan;
 
 		var P = new Array(3);
 		var Q = new Array(3);
 		P[0] = cc - ss * cos_inc;
-    P[1] = cs + sc * cos_inc;
-    P[2] = sin_argp * sin_inc;
+		P[1] = cs + sc * cos_inc;
+		P[2] = sin_argp * sin_inc;
 
-    Q[0] = -sc - cs * cos_inc;
-    Q[1] = -ss + cc * cos_inc;
-    Q[2] = cos_argp * sin_inc;
+		Q[0] = -sc - cs * cos_inc;
+		Q[1] = -ss + cc * cos_inc;
+		Q[2] = cos_argp * sin_inc;
 
 
 		pos_vel[0] = gaussX * P[0] + gaussY * Q[0];
-    pos_vel[1] = gaussX * P[1] + gaussY * Q[1];
-    pos_vel[2] = gaussX * P[2] + gaussY * Q[2];
+		pos_vel[1] = gaussX * P[1] + gaussY * Q[1];
+		pos_vel[2] = gaussX * P[2] + gaussY * Q[2];
 
-    pos_vel[3] = gaussXdot * P[0] + gaussYdot * Q[0];
-    pos_vel[4] = gaussXdot * P[1] + gaussYdot * Q[1];
-    pos_vel[5] = gaussXdot * P[2] + gaussYdot * Q[2];
-
-		//console.log("keplerian:pos_vel:",pos_vel);
+		pos_vel[3] = gaussXdot * P[0] + gaussYdot * Q[0];
+		pos_vel[4] = gaussXdot * P[1] + gaussYdot * Q[1];
+		pos_vel[5] = gaussXdot * P[2] + gaussYdot * Q[2];
 
 		return pos_vel;
-	},
-
-
-
+	}
 };

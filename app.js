@@ -18,7 +18,8 @@ httpServer.listen(port, () => console.log(`Listening on ${port}`));
 
 // this is what will appear when you just got to localhost:4443
 app.get('/',function (req,res) {
-	res.sendFile(path.join(__dirname+'/home.html'));
+	//res.sendFile(path.join(__dirname+'/home.html'))
+	res.sendFile(path.join(__dirname+'/index.html'));
 });
 
 // adding functionality to log the requests
