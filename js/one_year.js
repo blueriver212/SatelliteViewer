@@ -86,21 +86,15 @@ function oneYearLoad() {
      viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
      viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
 
-
- 
-          
      /// debris_collection to store all the debris points
      debris_collection = new Cesium.PointPrimitiveCollection();
-     debri_collection_radar = new Cesium.PointPrimitiveCollection();
+     sphere_collection = new Cesium.EntityCollection();
 
-     //By seting the blendOption to OPAQUE can improve the performance twice
-     debri_collection_radar.blendOption = Cesium.BlendOption.OPAQUE;
- 
+     //By seting the blendOption to OPAQUE can improve the performance twice 
      /// add debris_collection to the viewer_main
      /// should organize debris in different orbtis to different collections
      debris_collection = viewer_main.scene.primitives.add(debris_collection);
      debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
-    
      
      var colour; 
 
@@ -113,6 +107,7 @@ function oneYearLoad() {
         console.log(satcat.getNumberTotal());
         
        for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
+       //for (var debrisID = 0; debrisID < 1; debrisID++) 
         {
           var operation_status = satcat.getDebriOperation_status(debrisID);
           var name = satcat.getSatelliteName(debrisID);
@@ -125,43 +120,28 @@ function oneYearLoad() {
             colour = Cesium.Color.RED;
           }
 
-          // if (name.includes('Starlink')) {
-          //   colour = Cesium.Color.GREEN;
-          //   debris_collection.add({
-          //     id: satcat.getDebriName([debrisID]),
-          //     name: name,
-          //     position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-          //     pixelSize: 3,
-          //     color: colour,
-          //   });
-          // }
-
+          if (name.includes('Starlink')) {
+            colour = Cesium.Color(1.0, 1.0, 1.0, 0.5);
             debris_collection.add({
               id: [debrisID],
-              //id: satcat.getDebriName([debrisID]),
               position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-              pixelSize: 3,
+              pixelSize: 10,
+              alpha: 0.5,
               color: colour,
             });
+    
+          }
         }
 
         data_load=true;
-      }
-    
-          //  viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
-          //  viewer_main.scene.preRender.addEventListener(update_debris_position);
-          //  viewer_main.scene.postUpdate.addEventListener(update_debris_position);
-    
+      }  
      }, 1000); /// allow sometime to load the Earth 
  
-     //viewer_main.selectedEntity.addEventListener(test);
-
      viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
-     //viewer_main.scene.preRender.addEventListener(update_debris_position);
      viewer_main.scene.postUpdate.addEventListener(update_debris_position);
 
 
-    // will return the selected satellite name
+    // will return the selected satellite name when the object is clicked
     handler.setInputAction(function(movement) {
       const pickedFeature = viewer_main.scene.pick(movement.position);
       if (!Cesium.defined(pickedFeature)) {
@@ -172,6 +152,24 @@ function oneYearLoad() {
         document.getElementById("satelliteInfoBox").value = satcat.returnSatelliteInformationAsString(pickedFeature.id)
         console.log(pickedFeature.id)
         console.log(satcat.returnSatelliteInformationAsString(pickedFeature.id));
+
+        // the plot the orbit of the selected satellite
+        var orbit_positions = satcat.getOrbitForSatellite(pickedFeature.id);
+        
+        console.log(orbit_positions);
+        viewer_main.entities.add({
+          name: 'orbit',
+          polyline: {
+            positions: Cesium.Cartesian3.fromRadiansArrayHeights(orbit_positions), 
+            width: 10,
+            material : new Cesium.PolylineOutlineMaterialProperty({
+              color : Cesium.Color.DEEPSKYBLUE,
+              outlineWidth : 4,
+              outlineColor : Cesium.Color.DARKBLUE
+          })
+          }
+        })
+        
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 }

@@ -242,4 +242,70 @@ class Catalogue
 			alert("unknown debri index!!!");
 		}
 	}
+
+	getOrbitForSatellite(isat)
+	{
+		// Get the satellite
+		var idebri = this.debris_kep[isat];
+		var car = new Cesium.Cartographic(), Y = new Cesium.Cartesian3();
+		var CRFtoTRF = Cesium.Transforms.computeIcrfToFixedMatrix(Cesium.JulianDate.now()); // Julian Date
+		var stateVector, arr = [];
+		// add mean anomaly
+		idebri.mean_anomaly = null;
+
+		var sattemp = jQuery.extend({}, idebri);
+
+		// calculate the x,y,z of the satellite for a full circle of orbit
+		for (sattemp.mean_anomaly = 0.01; sattemp.mean_anomaly < 6.29; sattemp.mean_anomaly += 0.01)
+		{
+			stateVector = calculateStateVector(sattemp, false)
+            Cesium.Matrix3.multiplyByVector(CRFtoTRF, stateVector.pos, Y)
+
+			viewer_main.scene.mapProjection.ellipsoid.cartesianToCartographic(Y, car)
+			arr.push(car.longitude, car.latitude, car.height*-1);		
+		}
+
+		console.log(sattemp);
+
+		return arr;
+		
+
+	}
+}
+
+
+function calculateStateVector(ele, posonly=false)
+{
+	var EGM96_mu = 3.986004415E14;
+	var twoPi = (2*Math.PI)
+	if (ele.eccentricAnomaly == 0) {ele.eccentricAnomaly = 0.0001}
+	var ecan = eccentricAnomaly(ele.mean_anomaly, ele.eccentricity, 1E-6, 20, twoPi)
+    var tran = 2*Math.atan2(Math.sqrt((1+ele.eccentricity)/(1-ele.eccentricity))*Math.sin(ecan/2), Math.cos(ecan/2))
+    var p = ele.semi_major_axis*(1 - ele.eccentricity*ele.eccentricity)
+    var r = p/(1 + ele.eccentricity*Math.cos(tran))
+    var h = Math.sqrt(EGM96_mu*p), ci = Math.cos(ele.inclination), si = Math.sin(ele.inclination), cr = Math.cos(ele.RAAN),
+	sr = Math.sin(ele.RAAN), cw = Math.cos(ele.argument_of_perigee + tran), sw = Math.sin(ele.argument_of_perigee + tran)
+
+    var pos = new Cesium.Cartesian3(cr*cw-sr*sw*ci, sr*cw+cr*sw*ci, si*sw), pos2 = new Cesium.Cartesian3()
+    Cesium.Cartesian3.multiplyByScalar(pos, r, pos2)
+    if (posonly)
+	return(pos2)
+
+    var vel = new Cesium.Cartesian3(), vel1 = new Cesium.Cartesian3(), vel2 = new Cesium.Cartesian3()
+    Cesium.Cartesian3.subtract(Cesium.Cartesian3.multiplyByScalar(pos2, h*ele.eccentricity*Math.sin(tran)/(r*p), vel1),
+			       Cesium.Cartesian3.multiplyByScalar(new Cesium.Cartesian3(cr*sw+sr*cw*ci, sr*sw-cr*cw*ci,-si*cw),h/r,vel2),vel)
+    return({pos: pos2, vel: vel})
+}
+
+function eccentricAnomaly(mean, ecc, tol, maxIter, twoPi)
+{
+    var i, curr, prev = mean
+    for (i = 1; i <= maxIter; i++)
+    {
+        curr = prev - (prev - ecc*Math.sin(prev) - mean)/(1 - ecc*Math.cos(prev))
+        if (Math.abs(curr - prev) <= tol)
+            return(curr % twoPi)
+        prev = curr
+    }
+    return(NaN)
 }
