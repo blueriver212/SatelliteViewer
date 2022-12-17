@@ -1,10 +1,12 @@
+const { TimeStandard } = require("cesium");
+
 //the class to manage the Catalogue data
 class Catalogue
 {
 	constructor()
 	{
-		this.debris_kep=[]; /// debris described in keplerian elements
-		this.debris_tle=[]; /// debris described in two line elements
+		this.objectsKeplerian=[]; /// debris described in keplerian elements
+		this.objectsTLE=[]; /// debris described in two line elements
 		this.data_load_complete=false;
 	}
 
@@ -12,16 +14,16 @@ class Catalogue
 	{
 		if(type=="kpe")
 		{
-			this.debris_kep=[];
+			this.objectsKeplerian=[];
 		}
 		else if(type=="tle")
 		{
-			this.debris_tle=[];
+			this.objectsTLE=[];
 		}
 		else
 		{
-			this.debris_kep=[];
-			this.debris_tle=[];
+			this.objectsKeplerian=[];
+			this.objectsTLE=[];
 		}
 
 		this.data_load_complete=false;
@@ -36,46 +38,46 @@ class Catalogue
 
 	getNumberTotal()
 	{
-		return this.debris_kep.length + this.debris_tle.length;
+		return this.objectsKeplerian.length + this.objectsTLE.length;
 	}
 
 	getDebriInfo(isat)
 	{
-		if(isat < this.debris_kep.length)
+		if(isat < this.objectsKeplerian.length)
 		{
-			return this.debris_kep[isat];
+			return this.objectsKeplerian[isat];
 		}
-		else if(isat >= this.debris_kep.length 
+		else if(isat >= this.objectsKeplerian.length 
 			&& isat < this.getNumberTotal() )
 		{
-			return this.debris_tle[isat-this.debris_kep.length]
+			return this.objectsTLE[isat-this.objectsKeplerian.length]
 		}
 	}
 
 	getDebriName(isat)
 	{
-		if(isat < this.debris_kep.length)
+		if(isat < this.objectsKeplerian.length)
 		{
-			return this.debris_kep[isat]["RSO_name"];
+			return this.objectsKeplerian[isat]["RSO_name"];
 		}
-		else if(isat >= this.debris_kep.length 
+		else if(isat >= this.objectsKeplerian.length 
 			&& isat < this.getNumberTotal() )
 		{
-			return this.debris_tle[isat-this.debris_kep.length]["name"];
+			return this.objectsTLE[isat-this.objectsKeplerian.length]["name"];
 		}
 	}
 
-	getCatalogue() {
-		return this.debris_kep;
+	GetCatalogue() {
+		return this.objectsKeplerian;
 	}
 	
 	//ref: http://www.celestrak.com/satcat/status.php
 	getDebrisOperationStatus(isat)
 	{
 		var s = -1;
-		if(isat < this.debris_kep.length)
+		if(isat < this.objectsKeplerian.length)
 		{
-			var aa = this.debris_kep[isat]["payload_operational_status"].trim(); // fsp adds white space to the payload status
+			var aa = this.objectsKeplerian[isat]["payload_operational_status"].trim(); // fsp adds white space to the payload status
 			if(aa == '+') {s = 1;} /// operational 
 			else if(aa == '-') 	{s = -1;} /// non-operational
 			else if(aa == 'P') 	{s = 0.5;} /// partially operational 
@@ -89,7 +91,7 @@ class Catalogue
 				s = -1;
 			}
 		}
-		else if(isat >= this.debris_kep.length 
+		else if(isat >= this.objectsKeplerian.length 
 			&& isat < this.getNumberTotal() )
 		{
 			s = 0;
@@ -99,82 +101,87 @@ class Catalogue
 
 	getSatelliteName(isat) 
 	{
-		return this.debris_kep[isat]["RSO_name"].trim();
+		return this.objectsKeplerian[isat]["RSO_name"].trim();
 	}
 
 	returnSatelliteInformationAsString(isat) 
 	{
-		var satellite_info = `Name: ${this.debris_kep[isat]["RSO_name"].trim()}, 
-		Owner: ${this.debris_kep[isat]["owner"].trim()}`;
+		var satellite_info = `Name: ${this.objectsKeplerian[isat]["RSO_name"].trim()}, 
+		Owner: ${this.objectsKeplerian[isat]["owner"].trim()}`;
 		return satellite_info;
 	}
 
-	/// read in the debris data in the format of JSON
-	loadCatalog(orbit_type,jsonFile)
+	/* 
+	Takes an input JSON file and an orbit type (currently defaults to Keplerian Elements) and will load them back to an array
+	Will return a boolean depending if the data has been successfully loaded into the software.
+	*/
+	LoadCatalogue(jsonFile, orbitType = "kep")
 	{
-		// first need to turn remove the search button and then turn it into a spinner
-		document.getElementById('button1year').style.zIndex = -2000;
-		document.getElementById('spinner').style.zIndex = 9999;
-		document.getElementById('dropdown').style.zIndex = -9999;
+		// first remove any satellites that already exist in the catalogue
+		this.objectsKeplerian = [];
+		
+		if (orbitType == "tle")
+		{
+			that.objectsTLE = data.debris;
+			that.data_load_complete = true;
 
-		var that = this;
-		/// Here we used sync mode which will cause Cesium an issue in the loading of Earth
-		/// possible solution is to integrate Cesium viewer in the Catalogue class 
-		$.ajax({
-			url: jsonFile,
-			type: "GET",
-			dataType: "json",
-			async: false,
-			success: function(data) { /// a callback function to parse the data into the class object
-				
-				if(orbit_type == "tle")
-				{
-					that.debris_tle = data.debris;
+			return true;
+		}
+		else if(orbitType == "kep")
+		{
+			this.objectsKeplerian = jsonFile;
+			
+			console.log(this.objectsKeplerian)
+			// create an index that can then be looped back over when propogating
+			// The data has already been loaded into objects Keplerian, this will parse the integers and add index
 
-					that.data_load_complete = true;
-				}
+			for(var objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
+			{
+				var epochOfOrbit = this.objectsKeplerian[objectID]["epoch_of_orbit"];			
+				var timeString = epochOfOrbit.split("-");
+				var month = parseInt(timeString[1])-1;
+				this.objectsKeplerian[objectID]["object_id"] = objectID; // add index
+				this.objectsKeplerian[objectID]["true_anomaly"] = parseFloat(tempObject["true_anomaly"]);
+				this.objectsKeplerian[objectID]['semi_major_axis'] = parseFloat(tempObject['semi_major_axis']);
+				this.objectsKeplerian[objectID]["eccentricity"] = parseFloat(tempObject["eccentricity"]);
+				this.objectsKeplerian[objectID]["inclination"] = parseFloat(tempObject["inclination"]);
+				this.objectsKeplerian[objectID]["epoch_of_orbit"] = new Date(timeString[0],month,timeString[2]);				
+				this.objectsKeplerian[objectID]["RAAN"] = parseFloat(tempObject["RAAN"]);
+				this.objectsKeplerian[objectID]["argument_of_perigee"] = parseFloat(tempObject["argument_of_perigee"]);
+			}
 
-				else if(orbit_type == "kep")
-				{
-					that.debris_kep = data.debris;
-					var isat=-1;
-					for(isat = 0;isat < that.debris_kep.length; isat++)
-					{
-						var idebri = that.debris_kep[isat];
-						
-						var epoch_of_orbit_str = idebri["epoch_of_orbit"];
-						
-						var t0_str = epoch_of_orbit_str.split("-");
-						var month = parseInt(t0_str[1])-1;
-						that.debris_kep[isat]["epoch_of_orbit"] = new Date(t0_str[0],month,t0_str[2]);				
-						that.debris_kep[isat]['semi_major_axis'] = parseFloat(idebri['semi_major_axis']);
-						that.debris_kep[isat]["eccentricity"] = parseFloat(idebri["eccentricity"]);
-						that.debris_kep[isat]["inclination"] = parseFloat(idebri["inclination"]);
-						that.debris_kep[isat]["RAAN"] = parseFloat(idebri["RAAN"]);
-						that.debris_kep[isat]["argument_of_perigee"] = parseFloat(idebri["argument_of_perigee"]);
-						that.debris_kep[isat]["true_anomaly"] = parseFloat(idebri["true_anomaly"]);
-					}
+			// var objectID = -1;
+			// for(objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
+			// {
+			// 	var tempObject = this.objectsKeplerian[objectID];	
+			// 	console.log(tempObject);
+			// 	var epochOfOrbit = tempObject["epoch_of_orbit"];			
+			// 	var timeString = epochOfOrbit.split("-");
+			// 	var month = parseInt(timeString[1])-1;
+			// 	this.objectsKeplerian[tempObject]["true_anomaly"] = parseFloat(tempObject["true_anomaly"]);
+			// 	this.objectsKeplerian[tempObject]['semi_major_axis'] = parseFloat(tempObject['semi_major_axis']);
+			// 	this.objectsKeplerian[tempObject]["eccentricity"] = parseFloat(tempObject["eccentricity"]);
+			// 	this.objectsKeplerian[tempObject]["inclination"] = parseFloat(tempObject["inclination"]);
+			// 	this.objectsKeplerian[tempObject]["epoch_of_orbit"] = new Date(timeString[0],month,timeString[2]);				
+			// 	this.objectsKeplerian[tempObject]["RAAN"] = parseFloat(tempObject["RAAN"]);
+			// 	this.objectsKeplerian[tempObject]["argument_of_perigee"] = parseFloat(tempObject["argument_of_perigee"]);
+			// }
 
-					that.data_load_complete = true;
-				}
+			return true;
+		}
 
-				// send the spinner to the back and bring forward the search bar
-				document.getElementById('button1year').style.zIndex = 9998;
-				document.getElementById('spinner').style.zIndex = -9999;		
-				document.getElementById('dropdown').style.zIndex = 9999;		
-			} // END OF DATA
- 		}) // end of ajax
+		return false;
 	}
 	
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
 	computeDebrisPositionECI(isat, time)
 	{
-		if(isat < this.debris_kep.length) /// using keplerian propagation
+		if(isat < this.objectsKeplerian.length) /// using keplerian propagation
 		{
-			var idebri = this.debris_kep[isat];
+			var idebri = this.objectsKeplerian[isat];
 			var positionAndVelocity={position:{x:0,y:0,z:0},velocity:{x:0,y:0,z:0}};
-			//return this.debris_kep[isat];
+			//return this.objectsKeplerian[isat];
 			var kep = new KeplerianElement();
 
 			kep.setElements(idebri['semi_major_axis'],
@@ -202,9 +209,9 @@ class Catalogue
 			return positionAndVelocity;
 		}
 
-		else if(isat >= this.debris_kep.length && isat < this.getNumberTotal()) // using spg4 propogation
+		else if(isat >= this.objectsKeplerian.length && isat < this.getNumberTotal()) // using spg4 propogation
 		{
-			var idebri = this.debris_tle[isat-this.debris_kep.length];
+			var idebri = this.objectsTLE[isat-this.objectsKeplerian.length];
 			var line1,line2;
 			line1 = idebri["line1"];
 			line2 = idebri["line2"];
@@ -212,7 +219,7 @@ class Catalogue
 			var satrec = satellite.twoline2satrec(line1, line2);
 			var positionAndVelocity = satellite.propagate(satrec,time); /// in km
 			return positionAndVelocity;
-			//return this.debris_tle[isat-this.debris_kep.length]
+			//return this.objectsTLE[isat-this.objectsKeplerian.length]
 		}
 		else
 		{
@@ -223,7 +230,7 @@ class Catalogue
 	getOrbitForSatellite(isat)
 	{
 		// Get the satellite
-		var idebri = this.debris_kep[isat];
+		var idebri = this.objectsKeplerian[isat];
 		var car = new Cesium.Cartographic(), Y = new Cesium.Cartesian3();
 		var CRFtoTRF = Cesium.Transforms.computeIcrfToFixedMatrix(Cesium.JulianDate.now()); // Julian Date
 		var stateVector, arr = [];

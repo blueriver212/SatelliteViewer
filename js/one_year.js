@@ -1,13 +1,3 @@
-var viewer_main, radar_viewer;
-var start_jd;
-
-var clockViewModel; /// the clockmodel for synchronisation of two views
-var data_load=false;
-var debris_collection;
-var debri_collection_radar; /// it is the same as debris_collection
-var handler;
-
-
 function numberOfLoads() {
   // this function is for when the main toolbar button is clicked
   // first ensure that all elements are behind the main cesium container
@@ -34,21 +24,21 @@ function numberOfLoads() {
   // remove and restart the data every time the 1 year button is clicked
   if (!satcat === true) {
     oneYearLoad();
-    console.log('im on the wrong side');
 
   } else {
     satcat.clear_catalog();
     data_load = false;
-    debris_collection.removeAll();
-    debri_collection_radar.removeAll();
-    console.log('im in the if statement');
+    console.log(debris_collection)
+    if (typeof debris_collection == undefined) {
+      debris_collection.removeAll();
+    }
     oneYearLoad();
   }
 }
 
 function oneYearLoad() {
-    // this is only for the search button when clicked
-    satcat = new Catalogue();
+
+    var satcat = new Catalogue();
     // get the user's year from the search box
     var userOneYear = document.getElementById('1yearsearch').value;
     var satcat_logfile = getURL(userOneYear);
@@ -117,11 +107,8 @@ function oneYearLoad() {
         else
         {
           colour = Cesium.Color.RED;
-        }
-
-          
-        }
-
+        }    
+      }
       data_load=true;
     }  
     }, 1000); /// allow sometime to load the Earth 
