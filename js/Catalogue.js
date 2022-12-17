@@ -241,12 +241,8 @@ class Catalogue
 			viewer_main.scene.mapProjection.ellipsoid.cartesianToCartographic(Y, car)
 			arr.push(car.longitude, car.latitude, car.height*-1);		
 		}
-
 		console.log(sattemp);
-
 		return arr;
-		
-
 	}
 }
 

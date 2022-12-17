@@ -14,9 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-
+  <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+  <link rel="stylesheet" href="/css/index.css"></link>
+
+  <!-- JavaScript -->
   <script src="/js/hotspot.js"></script>
   <script src="/js/one_year.js"></script>
   <script src="/js/two_year.js"></script>
@@ -24,219 +26,6 @@
   <script src="/js/Catalogue.js"></script>
   <script src = "/js/dat.gui.min.js"> </script> 
   <script src = "/js/KeplerianElement.js"> </script> 
-
-<style>
-/* Google Fonts */
-@import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
-
-@import url(../node_modules/cesium/Build/Cesium/Widgets/widgets.css);
-  html, body, #cesiumContainer {
-       width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9997;
-       /* This here will allow the cesium container to fill the rest of the page */
-       display: flex; flex-direction: column;   
-   }
-
-   .science {
-    width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; z-index: 9999;
-      /* This here will allow the cesium container to fill the rest of the page */
-      display: flex; flex-direction: column; 
-  }
-   .navbar {
-      z-index: 9998;
-    }
-
-    #gui { position: absolute; top: 100px; }
-
-        /* This is for the search bar */
-        * {
-      box-sizing: border-box;
-    }
-
-    /* Style the search field */
-    form.example input[type=text] {
-      padding: 10px;
-      font-size: 17px;
-      border: 1px solid grey;
-      float: left;
-      width: 80%;
-      background: #f1f1f1;
-      position: absolute;
-      left:2%;
-      top:10%;
-      width:10%;
-    }
-
-    /* Style the submit button */
-    form.example button {
-      float: left;
-      width: 20%;
-      padding: 10px;
-      background: #2196F3;
-      color: white;
-      font-size: 17px;
-      border: 1px solid grey;
-      border-left: none; /* Prevent double borders */
-      cursor: pointer;
-      position: absolute;
-      left:12%;
-      top:10%;
-      width:5%;
-    }
-
-    form.example button:hover {
-      background: #0b7dda;
-    }
-
-    /* For the drop down option to search for country */
-    form.drop button{
-      float: left;
-      width: 20%;
-      padding: 10px;
-      background: #2196F3;
-      color: white;
-      font-size: 17px;
-      border: 1px solid grey;
-      border-left: none; /* Prevent double borders */
-      cursor: pointer;
-      position: absolute;
-      left:2%;
-      top: 16%;
-      width:15%;
-      background-color: #65737e ;
-    }
-
-    /* Clear floats */
-    form.example::after {
-      content: "";
-      clear: both;
-      display: table;
-     
-    }  
-
-    /* This is for the second search bar */
-     /* This is for the search bar */
-     * {
-      box-sizing: border-box;
-    }
-
-    /* Style the search field */
-    form.example1 input[type=text] {
-      padding: 10px;
-      font-size: 17px;
-      border: 1px solid grey;
-      float: left;
-      width: 80%;
-      background: #f1f1f1;
-      position: absolute;
-      left:2%;
-      top:60%;
-      width:10%;
-    }
-
-    /* Style the submit button */
-    form.example1 button {
-      float: left;
-      width: 20%;
-      padding: 10px;
-      background: #2196F3;
-      color: white;
-      font-size: 17px;
-      border: 1px solid grey;
-      border-left: none; /* Prevent double borders */
-      cursor: pointer;
-      position: absolute;
-      left:12%;
-      top:60%;
-      width:5%;
-    }
-
-    form.example1 button:hover {
-      background: #0b7dda;
-    }
-
-    /* Clear floats */
-    form.example1::after {
-      content: "";
-      clear: both;
-      display: table;
-     
-    } 
-
-*, *:before, *:after {
-  box-sizing: border-box;
-}
-
-.modal {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  display: none;
-  padding: 0 20px;
-  z-index: 2;
-}
-  
-.modal-inner {
-  background-color: #fff;
-  border-radius: 3px;
-  max-width: 1000px;
-  margin: 50px auto;
-  padding: 20px;
-}
-
-/* Placed on the body while a modal is open to prevent scrolling. */
-.showing-modal {
-  overflow: hidden;
-}
-
-/* So the scrollbar calculation is correct. */
-body {
-  margin: 0;
-}
-
-/* For the legend box colours */
-.box {
-  float: left;
-  /* height: 20px;
-  width: 20px; */
-  margin-bottom: 15px;
-  border: 1px solid black;
-  clear: both;
-  -webkit-border-radius:20px;
-  -moz-border-radius:20px;
-  border-radius:20px;
-    /* border:1px solid #ccc; */
-  width:20px;
-  height:20px;
-}
-
-.red {
-  background-color: red;
-}
-
-.yellow {
-  background-color: yellow;
-}
-
-.forestgreen {
-  background-color: #228B22;
-}
-
-.gold {
-  background-color: #FFD700;
-}
-
-.orange {
-  background-color: #FFA500;
-}
-
-.darkorange {
-  background-color:#FF8C00;
-}
-</style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65737e ;">
@@ -269,6 +58,15 @@ body {
       </ul>
     </div>
   </nav>
+
+  <div class="card border-dark mb-3" id="satelliteLegend">
+    <div class="card-body text" id="satelliteLegendheader">Click here to move</div>
+    <div class="card-body text">
+      <h5 class="card-title">Object Type</h5>
+      <div class="box red"></div><p class="card-text" style="white-space: pre; white-space: after;"> Debris</p>
+      <div class="box yellow"></div><p class="card-text" style="white-space: pre; ">Active Satellite</p>
+    </div> 
+  </div>
 
   <div id="cesiumContainer">
     <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9998;">
@@ -329,19 +127,8 @@ body {
       </label>
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid" >
       <div class="row">
-        <div class="col-sm-13 d-flex justify-content-center" id="satellite_legend" style="top: 30px; z-index: 9999;">
-          <div class="card border-dark mb-3" style="max-width: 25rem; margin:auto;   position: absolute; right:2%; top:20%; background-color: #6C757D  ;">
-            <!-- <div class="card-header text"></div> -->
-            <div class="card-body text">
-              <h5 class="card-title">Object Type</h5>
-              <div class="box red"></div><p class="card-text" style="white-space: pre; white-space: after;">  Inactive Satellite/Debris</p>
-              <div class="box yellow"></div><p class="card-text" style="white-space: pre;">  Active Satellite</p>
-            </div>
-          </div>
-        </div>
-
         <div class="col-sm-2 d-flex justify-content-center" id="hotspot_legend" style="top:30px; z-index: -9999;">
           <div class="card border-dark mb-3"  style = "max-width: 18rem; margin:auto;  position: absolute;background-color: #6C757D  ;">
             <!-- <div class="card-header text"></div> -->
@@ -358,9 +145,6 @@ body {
         </div>  
       </div>
     </div>
-
- 
-
 
   <div id="modal" class="modal" style="z-index: 9999;">
     <div class="modal-inner modal-lg">
@@ -432,23 +216,7 @@ body {
     </div>
   </div>
 
-<!-- This is for the help page if it is needed -->
-  <!-- <div id="modal_load" class="modal" style="z-index: 9999;">
-    <div class="modal-inner modal-lg">
-      <center><h1>Future Space Population Visualiser</h1></center>
-      <h3 style="font-size:18px">A few things to note</h3>
-      <p>This website has been built to try to visualise and present a complex dataset of past, present and future satellite and debris populations. The aim is to try and spread the message of how space, especially Low-Earth Orbit, is filling up... <i>extremely quickly.</i></p>
-      <h3 style="font-size:18px">There are three main parts:</h3>
-      <p>Firstly, you are able to view the space population from any year from 1957-2030, by entering the date into the search box. There are 2 main visualization techniques for this, a <i>one year view</i> and a <i>two year view</i>. These are accessed through the options on the navigation bar at the top of the webpage.</p>
-      <p>The two year view will allow you to compare two separate satellite catalogues at once, use the respective search boxes on the web page.</p>
-      <p>Thirdly, Low-Earth Orbit is of specific interest at the moment, with the recent rise of SpaceX and OneWeb etc., the <i>Hotspot Analysis</i> tab is a visualisation proof of concept for communicating the problem. An important note: after 2019, when satellite orbits are predicted, all of the future launches start at the equator. This will eventually be fixed, but the original simulation will have to be modified first.</p>
-      <p>If your webpage is taking a little while to load, <strong> please be patient...</strong> sometimes, your browser is trying to load ~23,000 points on to a map! This could take a little time depending on your computer processing power...</p>
-    </div>
-  </div> -->
-  <script>
-
-
-
+<script>
 // stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
 $(document).ready(function() {
   $(window).keydown(function(event){
@@ -505,6 +273,49 @@ $('#open').click(function (event) {
 $(document).ready(function(){
         $("#modal_load").modal('show');
     });
+
+    dragElement(document.getElementById("satelliteLegend"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
 
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';

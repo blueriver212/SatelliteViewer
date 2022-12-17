@@ -15,11 +15,7 @@ function numberOfLoads() {
   document.getElementById('hotspot_toolbar').style.zIndex = -9990;
   document.getElementById('button2year').style.zindex = -100;
   document.getElementById('hotspot_legend').style.zIndex = -9999;  
-  document.getElementById('satellite_legend').style.zIndex = 9999;  
-
-  // try {viewer_main.dataSources.removeAll()} catch(err) {console.log(err)};
-
-
+  document.getElementById('satelliteLegend').style.zIndex = 9999;  
   one_year_clicked = true;
 
   // remove the double screen
@@ -31,26 +27,24 @@ function numberOfLoads() {
 
   //remove the hotspot data if exists
   try {viewer_main.dataSources.removeAll()} catch (err) {console.log(err);}
-
-  
+ 
   count = count + 1; 
   console.log(count);
 
   // remove and restart the data every time the 1 year button is clicked
-    if (!satcat === true) {
-      oneYearLoad();
-      console.log('im on the wrong side');
+  if (!satcat === true) {
+    oneYearLoad();
+    console.log('im on the wrong side');
 
-    } else {
-      satcat.clear_catalog();
-      data_load = false;
-      debris_collection.removeAll();
-      debri_collection_radar.removeAll();
-      console.log('im in the if statement');
-      oneYearLoad();
-    }
+  } else {
+    satcat.clear_catalog();
+    data_load = false;
+    debris_collection.removeAll();
+    debri_collection_radar.removeAll();
+    console.log('im in the if statement');
+    oneYearLoad();
   }
-
+}
 
 function oneYearLoad() {
     // this is only for the search button when clicked
@@ -73,73 +67,67 @@ function oneYearLoad() {
     handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
 
      
-     var mycredit= new Cesium.Credit("Space Geodesy and Navigation Laboratory",'data/sgnl.png','https://www.ucl.ac.uk');
-     // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
-     viewer_main.scene.frameState.creditDisplay.addDefaultCredit(mycredit);
-     viewer_main.CreditDisplay = true;
-     viewer_main.scene.debugShowFramesPerSecond = true;
-     viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
- 
-     start_jd = Cesium.JulianDate.now();
-     //start_jd = Cesium.JulianDate.fromIso8601("2019-01-01T13:00:00Z");
-     viewer_main.clock.startTime = Cesium.JulianDate.now(); ///It is in system loal time
-     viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-     viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+    var mycredit= new Cesium.Credit("Space Geodesy and Navigation Laboratory",'data/sgnl.png','https://www.ucl.ac.uk');
+    // var mycredit = new Cesium.Credit('Cesium', 'data/sgnl.png', 'https://www.ucl.ac.uk');
+    viewer_main.scene.frameState.creditDisplay.addDefaultCredit(mycredit);
+    viewer_main.CreditDisplay = true;
+    viewer_main.scene.debugShowFramesPerSecond = true;
+    viewer_main.scene.frameState.creditDisplay.removeDefaultCredit();
 
-     /// debris_collection to store all the debris points
-     debris_collection = new Cesium.PointPrimitiveCollection();
-     sphere_collection = new Cesium.EntityCollection();
+    // Clock Settings
+    start_jd = Cesium.JulianDate.now();
+    viewer_main.clock.startTime = Cesium.JulianDate.now();
+    viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+    viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
 
-     //By seting the blendOption to OPAQUE can improve the performance twice 
-     /// add debris_collection to the viewer_main
-     /// should organize debris in different orbtis to different collections
-     debris_collection = viewer_main.scene.primitives.add(debris_collection);
-     debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
-     
-     var colour; 
+    /// Collections to store Points/Entities
+    debris_collection = new Cesium.PointPrimitiveCollection();
+    sphere_collection = new Cesium.EntityCollection();
 
-     /// a timer is used to deal with the async reading of JSON
-     var timename=setInterval( function() 
-     {
-       if(satcat.data_load_complete == true && data_load == false)
-      {
-        //ShowDebris(viewer_main,mycatlog,4);
-        console.log(satcat.getNumberTotal());
-        
-       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
-       //for (var debrisID = 0; debrisID < 1; debrisID++) 
-        {
-          var operation_status = satcat.getDebrisOperationStatus(debrisID);
-          var name = satcat.getSatelliteName(debrisID);
-          if (operation_status > 0.0) 
-          {
-            colour = Cesium.Color.YELLOW;
-          }
-          else
-          {
-            colour = Cesium.Color.RED;
-          }
-
-          if (name.includes('Starlink')) {
-            colour = Cesium.Color(1.0, 1.0, 1.0, 0.5);
-            debris_collection.add({
-              id: [debrisID],
-              position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-              pixelSize: 10,
-              alpha: 0.5,
-              color: colour,
-            });
+    // By seting the blendOption to OPAQUE can improve the performance twice 
+    /// should organize debris in different orbtis to different collections
+    debris_collection = viewer_main.scene.primitives.add(debris_collection);
+    debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
     
-          }
+    var colour; 
+
+    /// a timer is used to deal with the async reading of JSON
+    var timename=setInterval( function() 
+    {
+      if(satcat.data_load_complete == true && data_load == false)
+    {
+      console.log(satcat.getNumberTotal());
+      
+      for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
+      {
+        var operation_status = satcat.getDebrisOperationStatus(debrisID);
+        var name = satcat.getSatelliteName(debrisID);
+        if (operation_status > 0.0) 
+        {
+          colour = Cesium.Color.YELLOW;
+
+          debris_collection.add({
+            id: [debrisID],
+            position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+            pixelSize: 1,
+            alpha: 0.5,
+            color: colour
+          });
+        }
+        else
+        {
+          colour = Cesium.Color.RED;
         }
 
-        data_load=true;
-      }  
-     }, 1000); /// allow sometime to load the Earth 
- 
-     viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
-     viewer_main.scene.postUpdate.addEventListener(update_debris_position);
+          
+        }
 
+      data_load=true;
+    }  
+    }, 1000); /// allow sometime to load the Earth 
+
+    viewer_main.scene.postUpdate.addEventListener(icrf_view_main); // enable Earth rotation, everything is seen to be in eci
+    viewer_main.scene.postUpdate.addEventListener(update_debris_position);
 
     // will return the selected satellite name when the object is clicked
     handler.setInputAction(function(movement) {
@@ -147,29 +135,26 @@ function oneYearLoad() {
       if (!Cesium.defined(pickedFeature)) {
           // nothing picked
           return;
-      }
-      else {
+      } else {
+        // Add information to text box - soon will be a table
         document.getElementById("satelliteInfoBox").value = satcat.returnSatelliteInformationAsString(pickedFeature.id)
-        console.log(pickedFeature.id)
-        console.log(satcat.returnSatelliteInformationAsString(pickedFeature.id));
 
         // the plot the orbit of the selected satellite
         var orbit_positions = satcat.getOrbitForSatellite(pickedFeature.id);
         
-        console.log(orbit_positions);
-        viewer_main.entities.add({
-          name: 'orbit',
-          polyline: {
-            positions: Cesium.Cartesian3.fromRadiansArrayHeights(orbit_positions), 
-            width: 10,
-            material : new Cesium.PolylineOutlineMaterialProperty({
-              color : Cesium.Color.DEEPSKYBLUE,
-              outlineWidth : 4,
-              outlineColor : Cesium.Color.DARKBLUE
-          })
-          }
-        })
-        
+        // console.log(orbit_positions);
+        // viewer_main.entities.add({
+        //   name: 'orbit',
+        //   polyline: {
+        //     positions: Cesium.Cartesian3.fromRadiansArrayHeights(orbit_positions), 
+        //     width: 10,
+        //     material : new Cesium.PolylineOutlineMaterialProperty({
+        //       color : Cesium.Color.DEEPSKYBLUE,
+        //       outlineWidth : 4,
+        //       outlineColor : Cesium.Color.DARKBLUE
+        //   })
+        //   }
+        // })
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 }
