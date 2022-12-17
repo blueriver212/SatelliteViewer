@@ -1,17 +1,11 @@
-
-// author: Zhen Li
-// email: hpulizhen@163.com
-
 //the class to manage the Catalogue data
-
 class Catalogue
 {
-	constructor(){
-		/// nothing
+	constructor()
+	{
 		this.debris_kep=[]; /// debris described in keplerian elements
 		this.debris_tle=[]; /// debris described in two line elements
 		this.data_load_complete=false;
-		
 	}
 
 	clear_catalog(type)
@@ -35,21 +29,9 @@ class Catalogue
 
 	stringToDate(_date_str,_format,_delimiter)
 	{
-
 		var time = _date_str.split(_delimiter);
 		var formatedDate = new Date(time[0],(time[0]-1),time[2]);
 		return formatedDate;
-
-        // var formatLowerCase=_format.toLowerCase();
-        // var formatItems=formatLowerCase.split(_delimiter);
-        // var dateItems=_date_str.split(_delimiter);
-        // var monthIndex=formatItems.indexOf("mm");
-        // var dayIndex=formatItems.indexOf("dd");
-        // var yearIndex=formatItems.indexOf("yyyy");
-        // var month=parseInt(dateItems[monthIndex]);
-        // month-=1;
-        // var formatedDate = new Date(dateItems[yearIndex],month,dateItems[dayIndex]);
-        // return formatedDate;
 	}
 
 	getNumberTotal()
@@ -88,13 +70,12 @@ class Catalogue
 	}
 	
 	//ref: http://www.celestrak.com/satcat/status.php
-	getDebriOperation_status(isat)
+	getDebrisOperationStatus(isat)
 	{
 		var s = -1;
 		if(isat < this.debris_kep.length)
 		{
 			var aa = this.debris_kep[isat]["payload_operational_status"].trim(); // fsp adds white space to the payload status
-			//console.log(aa);
 			if(aa == '+') {s = 1;} /// operational 
 			else if(aa == '-') 	{s = -1;} /// non-operational
 			else if(aa == 'P') 	{s = 0.5;} /// partially operational 
@@ -113,9 +94,7 @@ class Catalogue
 		{
 			s = 0;
 		}
-
 		return s;
-
 	}
 
 	getSatelliteName(isat) 
@@ -130,10 +109,8 @@ class Catalogue
 		return satellite_info;
 	}
 
-
-
 	/// read in the debris data in the format of JSON
-	loadcatlog(orbit_type,jsonFile)
+	loadCatalog(orbit_type,jsonFile)
 	{
 		// first need to turn remove the search button and then turn it into a spinner
 		document.getElementById('button1year').style.zIndex = -2000;
@@ -191,7 +168,7 @@ class Catalogue
 	
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
-	compute_debri_position_eci(isat, time)
+	computeDebrisPositionECI(isat, time)
 	{
 		if(isat < this.debris_kep.length) /// using keplerian propagation
 		{

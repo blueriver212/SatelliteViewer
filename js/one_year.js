@@ -62,7 +62,7 @@ function oneYearLoad() {
     type="kep";
     //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
     
-    satcat.loadcatlog(type, "./data/2023.json");
+    satcat.loadCatalog(type, "./data/2023.json");
     
     clockViewModel = new Cesium.ClockViewModel();
      //Enable depth testing so things behind the terrain disappear.
@@ -109,7 +109,7 @@ function oneYearLoad() {
        for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
        //for (var debrisID = 0; debrisID < 1; debrisID++) 
         {
-          var operation_status = satcat.getDebriOperation_status(debrisID);
+          var operation_status = satcat.getDebrisOperationStatus(debrisID);
           var name = satcat.getSatelliteName(debrisID);
           if (operation_status > 0.0) 
           {
@@ -205,7 +205,7 @@ function update_debris_position()
       ///compute the position of debris according to time
       if (Cesium.defined(icrfToFixed)) // date transformation
       {
-        var positionAndVelocity = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        var positionAndVelocity = mycatlog.computeDebrisPositionECI(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
         
         var position_eci = new Cesium.Cartesian3( 
           positionAndVelocity.position.x*1000,

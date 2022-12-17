@@ -85,7 +85,7 @@ function update_debris_position2()
    
       if (Cesium.defined(icrfToFixed2)) // date transformation
       {
-        var positionAndVelocity2 = mycatlog.compute_debri_position_eci(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+        var positionAndVelocity2 = mycatlog.computeDebrisPositionECI(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
         
         var position_eci2 = new Cesium.Cartesian3(positionAndVelocity2.position.x*1000,positionAndVelocity2.position.y*1000,positionAndVelocity2.position.z*1000);
         
@@ -133,7 +133,7 @@ function twoYearLoads() {
     //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
     satcat_logfile = getURL(userOneYear);
 
-    satcat2.loadcatlog(type,satcat_logfile);
+    satcat2.loadCatalog(type,satcat_logfile);
     
     clockViewModel2 = new Cesium.ClockViewModel();
  
@@ -182,7 +182,7 @@ function twoYearLoads() {
            for (var debrisID = 0; debrisID < satcat2.getNumberTotal(); debrisID++) 
            {
  
-             var operation_status = satcat2.getDebriOperation_status(debrisID);
+             var operation_status = satcat2.getDebrisOperationStatus(debrisID);
              if (operation_status > 0.0) 
              {
                colour = Cesium.Color.YELLOW;
