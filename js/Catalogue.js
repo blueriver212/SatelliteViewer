@@ -152,39 +152,7 @@ class Catalogue
 		}
 		return false;
 	}
-	
-	/* 
-		Will take each of the objects in the keplerian list. And propogate them with time. 
-	*/
-	PropogateCatalogue() {
-		// By seting the blendOption to OPAQUE can improve the performance twice 
-		/// should organize debris in different orbtis to different collections
-		var debris_collection = new Cesium.PointPrimitiveCollection();
-		debris_collection = viewer_main.scene.primitives.add(debris_collection);
-		debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
 
-		for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
-		{
-			var operation_status = satcat.getDebrisOperationStatus(debrisID);
-			var name = satcat.getSatelliteName(debrisID);
-			if (operation_status > 0.0) {
-				colour = Cesium.Color.YELLOW;
-
-				debris_collection.add({
-					id: [debrisID],
-					position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-					pixelSize: 1,
-					alpha: 0.5,
-					color: colour
-				});
-			} else {
-				colour = Cesium.Color.RED;
-			}    
-		}
-
-		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
-    	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition(debris_collection));
-	}
 
 
 	/// compute the positon of debris in eci
@@ -195,7 +163,6 @@ class Catalogue
 		{
 			var idebri = this.objectsKeplerian[isat];
 			var positionAndVelocity={position:{x:0,y:0,z:0},velocity:{x:0,y:0,z:0}};
-			//return this.objectsKeplerian[isat];
 			var kep = new KeplerianElement();
 
 			kep.setElements(idebri['semi_major_axis'],
@@ -207,11 +174,9 @@ class Catalogue
 							);
 			
 			var tt0 = new Date(idebri["epoch_of_orbit"]);
-	
 			var time_diff = (time - tt0)/1000.0; /// in sec
 			
-			kep.updateElements(time_diff);
-			var pv = kep.getStateVector();
+			var pv = kep.ReturnStateVectorWithTimeStep(time_diff);
 			positionAndVelocity.position.x = pv[0];
 			positionAndVelocity.position.y = pv[1];
 			positionAndVelocity.position.z = pv[2];

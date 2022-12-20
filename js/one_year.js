@@ -1,3 +1,12 @@
+var viewer_main, radar_viewer;
+var start_jd;
+var clockViewModel; /// the clockmodel for synchronisation of two views
+var data_load=false;
+var debris_collection;
+var debri_collection_radar; /// it is the same as debris_collection
+var handler;
+
+
 function numberOfLoads() {
   // this function is for when the main toolbar button is clicked
   // first ensure that all elements are behind the main cesium container
@@ -17,20 +26,18 @@ function numberOfLoads() {
 
   //remove the hotspot data if exists
   try {viewer_main.dataSources.removeAll()} catch (err) {console.log(err);}
- 
-  count = count + 1; 
-  console.log(count);
 
   // remove and restart the data every time the 1 year button is clicked
   if (!satcat === true) {
     oneYearLoad();
+    console.log('im on the wrong side');
 
   } else {
     satcat.clear_catalog();
     data_load = false;
     console.log(debris_collection)
     if (typeof debris_collection == undefined) {
-      debris_collection.removeAll();
+    debris_collection.removeAll();
     }
     oneYearLoad();
   }
@@ -79,10 +86,13 @@ function oneYearLoad() {
     debris_collection = viewer_main.scene.primitives.add(debris_collection);
     debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
     
+    var colour; 
+
     /// a timer is used to deal with the async reading of JSON
     var timename=setInterval( function() 
     {
-
+      if(satcat.data_load_complete == true && data_load == false)
+    {
       console.log(satcat.getNumberTotal());
       
       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
@@ -104,7 +114,11 @@ function oneYearLoad() {
         else
         {
           colour = Cesium.Color.RED;
-        }    
+        }
+
+          
+        }
+
       data_load=true;
     }  
     }, 1000); /// allow sometime to load the Earth 
@@ -158,10 +172,13 @@ function update_debris_position()
     // var t1_now = Cesium.JulianDate.now();
     // var t2_now = Date.now();
 
+    console.log(time_utc)
+
     var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
     var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
     var position_ecef = new Cesium.Cartesian3();
     var points = debris_set._pointPrimitives;
+
 
     var pos_radar_view = new Cesium.Cartesian3();
 
