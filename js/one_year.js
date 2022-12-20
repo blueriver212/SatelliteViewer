@@ -46,7 +46,7 @@ function oneYearLoad() {
     type="kep";
     //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
     
-    satcat.loadCatalog(type, "./data/2023.json");
+    satcat.LoadCatalogue(type, "./data/2023.json");
     
     clockViewModel = new Cesium.ClockViewModel();
      //Enable depth testing so things behind the terrain disappear.
@@ -79,13 +79,10 @@ function oneYearLoad() {
     debris_collection = viewer_main.scene.primitives.add(debris_collection);
     debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
     
-    var colour; 
-
     /// a timer is used to deal with the async reading of JSON
     var timename=setInterval( function() 
     {
-      if(satcat.data_load_complete == true && data_load == false)
-    {
+
       console.log(satcat.getNumberTotal());
       
       for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
@@ -108,7 +105,6 @@ function oneYearLoad() {
         {
           colour = Cesium.Color.RED;
         }    
-      }
       data_load=true;
     }  
     }, 1000); /// allow sometime to load the Earth 

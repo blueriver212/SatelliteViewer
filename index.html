@@ -18,17 +18,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/css/index.css"></link>
 
+  <script src = "/js/satellite.min.js"> </script> 
+  <script src = "/js/dat.gui.min.js"> </script> 
+  <script src = "/js/KeplerianElement.js"> </script> 
+  <script src="/js/Catalogue.js"></script>
   <script src="/js/DefineGlobalParameters.js"></script>
   <script src="/js/ApiHandler.js"></script>
-  <script src="/js/Catalogue.js"></script>
   <script src="/js/MainEarthView.js"></script>
   <script src="/js/HTMLElementHandler.js"></script>
   <script src="/js/hotspot.js"></script>
   <script src="/js/one_year.js"></script>
   <script src="/js/two_year.js"></script>
-  <script src = "/js/satellite.min.js"> </script> 
-  <script src = "/js/dat.gui.min.js"> </script> 
-  <script src = "/js/KeplerianElement.js"> </script> 
+
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65737e ;">
@@ -219,6 +220,66 @@
     </div>
   </div>
 <script>
+
+dragElement(document.getElementById("satelliteLegend"));
+
+function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+        /* if present, the header is where you move the DIV from:*/
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        /* otherwise, move the DIV from anywhere inside the DIV:*/
+        elmnt.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        /* stop moving when mouse button is released:*/
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }       
+}
+
+// stop the enter button being used in the entire project, this is stop the page refreshing when searching for a year
+$(document).ready(function() {
+    $(window).keydown(function(event){
+      if(event.keyCode == 13) {
+        // event.preventDefault();
+        // return false;
+        // get value of the box 
+        if (document.getElementById('1yearsearch').value != null) {
+          whichMap(1);
+        } else {
+          alert('You have not entered a year!');
+        }
+      }
+    });
+  });
+  
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODcyZDRmZC03ZmUzLTQwNTktOTM4Mi1jMmI0OWIwODY2NDkiLCJpZCI6NTcwMTcsImlhdCI6MTYyMTk2ODM2NH0.lzeb9LrtQ6y3uotDuKUN3djp1kz-4o5BMq5c8uIe_tU';
 

@@ -1,5 +1,4 @@
 // load the current view of space
-
 async function LoadLiveSatelliteData() {
     // look at the current map and then remove any existing satellites
     satcat = new Catalogue();
@@ -8,15 +7,17 @@ async function LoadLiveSatelliteData() {
 
     var apiHandler = new ApiHandler("./data/2023.json");
     satelliteJSON = apiHandler.LoadJSONSatelliteData();
-    if(satcat.LoadCatalogue(satelliteJSON)) {
-        console.log(satcat.GetCatalogue())
+    if (satcat.LoadCatalogue(satelliteJSON)) {
+        satcat.PropogateCatalogue();
+    } else {
+        alert("Unable to load catalogue into the visualiser. Please try again.");
     }
 }
 
 function CesiumInitialConditions() {
     clockViewModel = new Cesium.ClockViewModel();
 
-     //Enable depth testing so things behind the terrain disappear.
+    //Enable depth testing so things behind the terrain disappear.
     viewer_main.scene.globe.depthTestAgainstTerrain = true;       
     viewer_main.globe = true;
     viewer_main.scene.globe.enableLighting = true;

@@ -1,5 +1,3 @@
-const { TimeStandard } = require("cesium");
-
 //the class to manage the Catalogue data
 class Catalogue
 {
@@ -10,7 +8,7 @@ class Catalogue
 		this.data_load_complete=false;
 	}
 
-	clear_catalog(type)
+	static clear_catalog(type)
 	{
 		if(type=="kpe")
 		{
@@ -131,48 +129,64 @@ class Catalogue
 		{
 			this.objectsKeplerian = jsonFile;
 			
-			console.log(this.objectsKeplerian)
 			// create an index that can then be looped back over when propogating
 			// The data has already been loaded into objects Keplerian, this will parse the integers and add index
-
 			for(var objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
 			{
+				// Dates
 				var epochOfOrbit = this.objectsKeplerian[objectID]["epoch_of_orbit"];			
 				var timeString = epochOfOrbit.split("-");
 				var month = parseInt(timeString[1])-1;
-				this.objectsKeplerian[objectID]["object_id"] = objectID; // add index
-				this.objectsKeplerian[objectID]["true_anomaly"] = parseFloat(tempObject["true_anomaly"]);
-				this.objectsKeplerian[objectID]['semi_major_axis'] = parseFloat(tempObject['semi_major_axis']);
-				this.objectsKeplerian[objectID]["eccentricity"] = parseFloat(tempObject["eccentricity"]);
-				this.objectsKeplerian[objectID]["inclination"] = parseFloat(tempObject["inclination"]);
-				this.objectsKeplerian[objectID]["epoch_of_orbit"] = new Date(timeString[0],month,timeString[2]);				
-				this.objectsKeplerian[objectID]["RAAN"] = parseFloat(tempObject["RAAN"]);
-				this.objectsKeplerian[objectID]["argument_of_perigee"] = parseFloat(tempObject["argument_of_perigee"]);
+
+				// Add index and parse string to numbers for kep elements
+				this.objectsKeplerian[objectID]["object_id"] = objectID; 
+				this.objectsKeplerian[objectID]["true_anomaly"] = parseFloat(this.objectsKeplerian[objectID]["true_anomaly"]);
+				this.objectsKeplerian[objectID]['semi_major_axis'] = parseFloat(this.objectsKeplerian[objectID]['semi_major_axis']);
+				this.objectsKeplerian[objectID]["eccentricity"] = parseFloat(this.objectsKeplerian[objectID]["eccentricity"]);
+				this.objectsKeplerian[objectID]["inclination"] = parseFloat(this.objectsKeplerian[objectID]["inclination"]);
+				this.objectsKeplerian[objectID]["epoch_of_orbit"] = new Date(this.objectsKeplerian[objectID]["epoch_of_orbit"]);				
+				this.objectsKeplerian[objectID]["RAAN"] = parseFloat(this.objectsKeplerian[objectID]["RAAN"]);
+				this.objectsKeplerian[objectID]["argument_of_perigee"] = parseFloat(this.objectsKeplerian[objectID]["argument_of_perigee"]);
 			}
-
-			// var objectID = -1;
-			// for(objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
-			// {
-			// 	var tempObject = this.objectsKeplerian[objectID];	
-			// 	console.log(tempObject);
-			// 	var epochOfOrbit = tempObject["epoch_of_orbit"];			
-			// 	var timeString = epochOfOrbit.split("-");
-			// 	var month = parseInt(timeString[1])-1;
-			// 	this.objectsKeplerian[tempObject]["true_anomaly"] = parseFloat(tempObject["true_anomaly"]);
-			// 	this.objectsKeplerian[tempObject]['semi_major_axis'] = parseFloat(tempObject['semi_major_axis']);
-			// 	this.objectsKeplerian[tempObject]["eccentricity"] = parseFloat(tempObject["eccentricity"]);
-			// 	this.objectsKeplerian[tempObject]["inclination"] = parseFloat(tempObject["inclination"]);
-			// 	this.objectsKeplerian[tempObject]["epoch_of_orbit"] = new Date(timeString[0],month,timeString[2]);				
-			// 	this.objectsKeplerian[tempObject]["RAAN"] = parseFloat(tempObject["RAAN"]);
-			// 	this.objectsKeplerian[tempObject]["argument_of_perigee"] = parseFloat(tempObject["argument_of_perigee"]);
-			// }
-
 			return true;
 		}
-
 		return false;
 	}
 	
+	/* 
+		Will take each of the objects in the keplerian list. And propogate them with time. 
+	*/
+	PropogateCatalogue() {
+		// By seting the blendOption to OPAQUE can improve the performance twice 
+		/// should organize debris in different orbtis to different collections
+		var debris_collection = new Cesium.PointPrimitiveCollection();
+		debris_collection = viewer_main.scene.primitives.add(debris_collection);
+		debris_collection.blendOption=Cesium.BlendOption.OPAQUE;
+
+		for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
+		{
+			var operation_status = satcat.getDebrisOperationStatus(debrisID);
+			var name = satcat.getSatelliteName(debrisID);
+			if (operation_status > 0.0) {
+				colour = Cesium.Color.YELLOW;
+
+				debris_collection.add({
+					id: [debrisID],
+					position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+					pixelSize: 1,
+					alpha: 0.5,
+					color: colour
+				});
+			} else {
+				colour = Cesium.Color.RED;
+			}    
+		}
+
+		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
+    	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition(debris_collection));
+	}
+
+
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
 	computeDebrisPositionECI(isat, time)
@@ -251,6 +265,73 @@ class Catalogue
 		console.log(sattemp);
 		return arr;
 	}
+
+	UpdateObjectPosition(scene, time)
+	{	
+
+		// viewer_main.clock.startTime = Cesium.JulianDate.now();
+		// viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+		// viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+		// var mycatlog = satcat;
+
+		time = viewer_main.clock.currentTime; /// the current computer time in TAI? not in UTC?
+		var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
+		
+		var time_utc = Cesium.JulianDate.now();
+		Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
+
+		var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
+		var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
+		var position_ecef = new Cesium.Cartesian3();
+
+
+		console.log(icrfToFixed)
+
+		var points = debris_set._pointPrimitives;
+
+		var pos_radar_view = new Cesium.Cartesian3();
+
+
+		for (var i = 0; i < points.length; ++i) 
+		{
+			var point = points[i];
+
+			///compute the position of debris according to time
+			 if (Cesium.defined(icrfToFixed)) // date transformation
+			 {
+				var positionAndVelocity = this.computeDebrisPositionECI(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
+				
+				var position_eci = new Cesium.Cartesian3( 
+					positionAndVelocity.position.x*1000,
+					positionAndVelocity.position.y*1000,
+					positionAndVelocity.position.z*1000
+				);
+				
+				position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
+				
+				Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
+				
+				point.position = position_ecef; //// update back	
+			}
+		}
+	}
+
+	ICRFViewMain(scene, time) 
+	{
+		if (scene.mode !== Cesium.SceneMode.SCENE3D) 
+		{
+			return;
+		}
+		var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
+		if (Cesium.defined(icrfToFixed)) 
+		{
+			var camera = viewer_main.camera;
+			var offset = Cesium.Cartesian3.clone(camera.position);
+			var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
+			camera.lookAtTransform(transform, offset);
+		}
+	}
+ 
 }
 
 
@@ -289,3 +370,4 @@ function eccentricAnomaly(mean, ecc, tol, maxIter, twoPi)
     }
     return(NaN)
 }
+

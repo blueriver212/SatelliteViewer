@@ -11,7 +11,7 @@ var start_jd;
 var clockViewModel; 
 var data_load=false;
 var data_load2 = false;
-var debris_collection;
+var debris_collection = new Cesium.PointPrimitiveCollection();
 var debris_collection2;
 var satcat = new Catalogue();
 var satcat2;
@@ -19,6 +19,8 @@ var count = 0;
 var one_year_clicked = false;
 var two_year_clicked = false;
 var hotspot_data = false;
+var colour; 
+
 
 var options3D = {
   homeButton : false,
