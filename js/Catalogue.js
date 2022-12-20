@@ -52,6 +52,10 @@ class Catalogue
 		}
 	}
 
+	getSalliteDate(isat){
+		return this.objectsKeplerian[isat]["launch_date"];
+	}
+
 	getDebriName(isat)
 	{
 		if(isat < this.objectsKeplerian.length)
@@ -64,6 +68,7 @@ class Catalogue
 			return this.objectsTLE[isat-this.objectsKeplerian.length]["name"];
 		}
 	}
+
 
 	GetCatalogue() {
 		return this.objectsKeplerian;
@@ -162,7 +167,6 @@ class Catalogue
 		if(isat < this.objectsKeplerian.length) /// using keplerian propagation
 		{
 			var idebri = this.objectsKeplerian[isat];
-			var positionAndVelocity={position:{x:0,y:0,z:0},velocity:{x:0,y:0,z:0}};
 			var kep = new KeplerianElement();
 
 			kep.setElements(idebri['semi_major_axis'],
@@ -174,18 +178,10 @@ class Catalogue
 							);
 			
 			var tt0 = new Date(idebri["epoch_of_orbit"]);
-			var time_diff = (time - tt0)/1000.0; /// in sec
+			var time_diff = (time - tt0)/100000; /// in sec
 			
 			var pv = kep.ReturnStateVectorWithTimeStep(time_diff);
-			positionAndVelocity.position.x = pv[0];
-			positionAndVelocity.position.y = pv[1];
-			positionAndVelocity.position.z = pv[2];
-
-			positionAndVelocity.velocity.x = pv[3];
-			positionAndVelocity.velocity.y = pv[4];
-			positionAndVelocity.velocity.z = pv[5];
-			
-			return positionAndVelocity;
+			return pv;
 		}
 
 		else if(isat >= this.objectsKeplerian.length && isat < this.getNumberTotal()) // using spg4 propogation
@@ -198,7 +194,6 @@ class Catalogue
 			var satrec = satellite.twoline2satrec(line1, line2);
 			var positionAndVelocity = satellite.propagate(satrec,time); /// in km
 			return positionAndVelocity;
-			//return this.objectsTLE[isat-this.objectsKeplerian.length]
 		}
 		else
 		{
@@ -230,109 +225,4 @@ class Catalogue
 		console.log(sattemp);
 		return arr;
 	}
-
-	UpdateObjectPosition(scene, time)
-	{	
-
-		// viewer_main.clock.startTime = Cesium.JulianDate.now();
-		// viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-		// viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
-		// var mycatlog = satcat;
-
-		time = viewer_main.clock.currentTime; /// the current computer time in TAI? not in UTC?
-		var tai_utc = Cesium.JulianDate.computeTaiMinusUtc(time); /// Time is in localtime ???
-		
-		var time_utc = Cesium.JulianDate.now();
-		Cesium.JulianDate.addSeconds(time, tai_utc, time_utc); // often modified julian date, as it is a smaller number 6 digits before dp
-
-		var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
-		var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
-		var position_ecef = new Cesium.Cartesian3();
-
-
-		console.log(icrfToFixed)
-
-		var points = debris_set._pointPrimitives;
-
-		var pos_radar_view = new Cesium.Cartesian3();
-
-
-		for (var i = 0; i < points.length; ++i) 
-		{
-			var point = points[i];
-
-			///compute the position of debris according to time
-			 if (Cesium.defined(icrfToFixed)) // date transformation
-			 {
-				var positionAndVelocity = this.computeDebrisPositionECI(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
-				
-				var position_eci = new Cesium.Cartesian3( 
-					positionAndVelocity.position.x*1000,
-					positionAndVelocity.position.y*1000,
-					positionAndVelocity.position.z*1000
-				);
-				
-				position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
-				
-				Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
-				
-				point.position = position_ecef; //// update back	
-			}
-		}
-	}
-
-	ICRFViewMain(scene, time) 
-	{
-		if (scene.mode !== Cesium.SceneMode.SCENE3D) 
-		{
-			return;
-		}
-		var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time);
-		if (Cesium.defined(icrfToFixed)) 
-		{
-			var camera = viewer_main.camera;
-			var offset = Cesium.Cartesian3.clone(camera.position);
-			var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
-			camera.lookAtTransform(transform, offset);
-		}
-	}
- 
 }
-
-
-function calculateStateVector(ele, posonly=false)
-{
-	var EGM96_mu = 3.986004415E14;
-	var twoPi = (2*Math.PI)
-	if (ele.eccentricAnomaly == 0) {ele.eccentricAnomaly = 0.0001}
-	var ecan = eccentricAnomaly(ele.mean_anomaly, ele.eccentricity, 1E-6, 20, twoPi)
-    var tran = 2*Math.atan2(Math.sqrt((1+ele.eccentricity)/(1-ele.eccentricity))*Math.sin(ecan/2), Math.cos(ecan/2))
-    var p = ele.semi_major_axis*(1 - ele.eccentricity*ele.eccentricity)
-    var r = p/(1 + ele.eccentricity*Math.cos(tran))
-    var h = Math.sqrt(EGM96_mu*p), ci = Math.cos(ele.inclination), si = Math.sin(ele.inclination), cr = Math.cos(ele.RAAN),
-	sr = Math.sin(ele.RAAN), cw = Math.cos(ele.argument_of_perigee + tran), sw = Math.sin(ele.argument_of_perigee + tran)
-
-    var pos = new Cesium.Cartesian3(cr*cw-sr*sw*ci, sr*cw+cr*sw*ci, si*sw), pos2 = new Cesium.Cartesian3()
-    Cesium.Cartesian3.multiplyByScalar(pos, r, pos2)
-    if (posonly)
-	return(pos2)
-
-    var vel = new Cesium.Cartesian3(), vel1 = new Cesium.Cartesian3(), vel2 = new Cesium.Cartesian3()
-    Cesium.Cartesian3.subtract(Cesium.Cartesian3.multiplyByScalar(pos2, h*ele.eccentricity*Math.sin(tran)/(r*p), vel1),
-			       Cesium.Cartesian3.multiplyByScalar(new Cesium.Cartesian3(cr*sw+sr*cw*ci, sr*sw-cr*cw*ci,-si*cw),h/r,vel2),vel)
-    return({pos: pos2, vel: vel})
-}
-
-function eccentricAnomaly(mean, ecc, tol, maxIter, twoPi)
-{
-    var i, curr, prev = mean
-    for (i = 1; i <= maxIter; i++)
-    {
-        curr = prev - (prev - ecc*Math.sin(prev) - mean)/(1 - ecc*Math.cos(prev))
-        if (Math.abs(curr - prev) <= tol)
-            return(curr % twoPi)
-        prev = curr
-    }
-    return(NaN)
-}
-

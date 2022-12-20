@@ -57,19 +57,24 @@ function PropogateCatalogue() {
 		{
 			var operation_status = satcat.getDebrisOperationStatus(debrisID);
 			var name = satcat.getSatelliteName(debrisID);
-			if (operation_status > 0.0) {
-				colour = Cesium.Color.YELLOW;
-
-				objectCatalogue.add({
-					id: [debrisID],
-					position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-					pixelSize: 1,
-					alpha: 0.5,
-					color: colour
-				});
-			} else {
-				colour = Cesium.Color.RED;
-			}    
+            var date = new Date(satcat.getSalliteDate(debrisID))
+            if (name.includes('Starlink') && date < new Date('2022-10-01')){
+                if (operation_status > 0.0) {
+                    colour = Cesium.Color.YELLOW;
+    
+                    objectCatalogue.add({
+                        id: [debrisID],
+                        position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+                        pixelSize: 1,
+                        alpha: 0.5,
+                        color: colour
+                    });
+                } 
+                // else {
+                //     colour = Cesium.Color.RED;
+                // }  
+            }
+			  
 		}
 
 		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
@@ -92,29 +97,22 @@ function UpdateObjectPosition()
 
     var pos_radar_view = new Cesium.Cartesian3();
 
-    //for (var i = 0; i < points.length; ++i) 
-    for (var i = 0; i < 1; ++i) 
-    {
-      var point = points[i];
+    points.forEach(element => {
+            if (Cesium.defined(icrfToFixed)) // date transformation
+            {
+                var positionAndVelocity = satcat.computeDebrisPositionECI(element._id[0], time_date_js);
+                var position_eci = new Cesium.Cartesian3( 
+                    positionAndVelocity.pos.x*1000,
+                    positionAndVelocity.pos.y*1000,
+                    positionAndVelocity.pos.z*1000
+                );
+                
+                position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);    
+                Cesium.Cartesian3.clone(position_ecef, pos_radar_view);     
 
-      ///compute the position of debris according to time
-      if (Cesium.defined(icrfToFixed)) // date transformation
-      {
-        var positionAndVelocity = satcat.computeDebrisPositionECI(i, time_date_js);//  satellite.propagate(tle_rec,time_date);
-        
-        var position_eci = new Cesium.Cartesian3( 
-            positionAndVelocity.position.x*1000,
-            positionAndVelocity.position.y*1000,
-            positionAndVelocity.position.z*1000
-        );
-        
-        position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);
-        
-        Cesium.Cartesian3.clone(position_ecef, pos_radar_view);
-        
-        //point.position = position_ecef; //// update back     
-      }
-    }
+                element.position = position_ecef; //// update back     
+            }
+    });
 }
     
 function ICRFViewMain(scene, time) 

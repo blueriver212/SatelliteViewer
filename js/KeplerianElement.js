@@ -270,8 +270,8 @@ KeplerianElement.prototype =
 		var n = Math.sqrt(this.GM/(this.a)/this.a);
 		if (this.e == 0) {this.e = 0.0001}
 
-		// mean anomaly
-		var ecan = eccentricAnomaly(M, this.e, 1E-6, 20, twoPi)
+		//var ecan = eccentricAnomaly(M, this.e, 1E-6, 20, twoPi)
+		var ecan = this.get_ecan_from_tran(this.e, this.nu);
 
 		// mean anomaly for time zero and time step
 		var M0 = this.get_mean_from_ecan(ecan,this.e);
@@ -282,16 +282,15 @@ KeplerianElement.prototype =
 		// var tran = 2*Math.atan2(Math.sqrt((1+this.e)/(1-this.e))*Math.sin(ecan/2), Math.cos(ecan/2))
 		var tran_t = this.get_tran_from_ecan(ecan_t, this.e);
 
-		var p = this.semi_major_axis*(1 - this.e*this.e)
+		var p = this.a*(1 - this.e*this.e)
 		var r = p/(1 + this.e*Math.cos(tran_t))
-		var h = Math.sqrt(EGM96_mu*p), ci = Math.cos(this.i), si = Math.sin(this.i), cr = Math.cos(this.OMEG),
+		var h = Math.sqrt(this.GM*p), ci = Math.cos(this.i), si = Math.sin(this.i), cr = Math.cos(this.OMEG),
 		sr = Math.sin(this.OMEG), cw = Math.cos(this.mu + tran_t), sw = Math.sin(this.mu + tran_t)
 
 		var pos = new Cesium.Cartesian3(cr*cw-sr*sw*ci, sr*cw+cr*sw*ci, si*sw), pos2 = new Cesium.Cartesian3()
 		Cesium.Cartesian3.multiplyByScalar(pos, r, pos2)
 		if (posonly)
 		return(pos2)
-
 
 		var vel = new Cesium.Cartesian3(), vel1 = new Cesium.Cartesian3(), vel2 = new Cesium.Cartesian3()
 		Cesium.Cartesian3.subtract(Cesium.Cartesian3.multiplyByScalar(pos2, h*this.e*Math.sin(tran_t)/(r*p), vel1),
