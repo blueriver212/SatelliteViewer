@@ -175,10 +175,13 @@ function update_debris_position()
     // var t1_now = Cesium.JulianDate.now();
     // var t2_now = Date.now();
 
+    console.log(time_utc)
+
     var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
     var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
     var position_ecef = new Cesium.Cartesian3();
     var points = debris_set._pointPrimitives;
+
 
     var pos_radar_view = new Cesium.Cartesian3();
 
