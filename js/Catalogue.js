@@ -134,26 +134,6 @@ class Catalogue
 
 	ReturnObjectInformationAsJSONForTable(isat) 
 	{
-		// var data = 
-		// [
-		// 	{
-		// 		"param": "COSPAR ID",
-		// 		"value": this.objectsKeplerian[isat]["COSPAR_ID"].trim()
-		// 	},
-		// 	{
-		// 		"param": "RSO Name",
-		// 		"value": this.objectsKeplerian[isat]["RSO_name"].trim()
-		// 	},
-		// 	{
-		// 		"param": "Owner",
-		// 		"value": this.objectsKeplerian[isat]["owner"].trim()
-		// 	},
-		// 	{
-		// 		"param": "Launch Date",
-		// 		"value": this.objectsKeplerian[isat]["launch_date"].trim()
-		// 	}
-		// ]
-
 		var data = {"item":[
 			{
 				"param": "COSPAR ID",
@@ -170,7 +150,20 @@ class Catalogue
 			{
 				"param": "Launch Date",
 				"value": this.objectsKeplerian[isat]["launch_date"].trim()
-			}]}
+			},
+			{
+				"param": "Application",
+				"value": this.objectsKeplerian[isat]["application"].trim()
+			},
+			{
+				"param": "Launch Site",
+				"value": this.objectsKeplerian[isat]["launch_site_code"].trim()
+			},
+			{
+				"param": "Mass",
+				"value": this.objectsKeplerian[isat]["mass"]
+			}
+		]}
 
 
 		// var satellite_info = `Name: ${this.objectsKeplerian[isat]["RSO_name"].trim()}, 
