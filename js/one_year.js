@@ -1,6 +1,5 @@
 var viewer_main, radar_viewer;
 var start_jd;
-
 var clockViewModel; /// the clockmodel for synchronisation of two views
 var data_load=false;
 var debris_collection;
@@ -27,9 +26,6 @@ function numberOfLoads() {
 
   //remove the hotspot data if exists
   try {viewer_main.dataSources.removeAll()} catch (err) {console.log(err);}
- 
-  count = count + 1; 
-  console.log(count);
 
   // remove and restart the data every time the 1 year button is clicked
   if (!satcat === true) {
@@ -39,16 +35,17 @@ function numberOfLoads() {
   } else {
     satcat.clear_catalog();
     data_load = false;
+    console.log(debris_collection)
+    if (typeof debris_collection == undefined) {
     debris_collection.removeAll();
-    debri_collection_radar.removeAll();
-    console.log('im in the if statement');
+    }
     oneYearLoad();
   }
 }
 
 function oneYearLoad() {
-    // this is only for the search button when clicked
-    satcat = new Catalogue();
+
+    var satcat = new Catalogue();
     // get the user's year from the search box
     var userOneYear = document.getElementById('1yearsearch').value;
     var satcat_logfile = getURL(userOneYear);
@@ -56,7 +53,7 @@ function oneYearLoad() {
     type="kep";
     //satcat_logfile="http://satellite-api.herokuapp.com/"+userOneYear+"";
     
-    satcat.loadCatalog(type, "./data/2023.json");
+    satcat.LoadCatalogue(type, "./data/2023.json");
     
     clockViewModel = new Cesium.ClockViewModel();
      //Enable depth testing so things behind the terrain disappear.
@@ -175,10 +172,13 @@ function update_debris_position()
     // var t1_now = Cesium.JulianDate.now();
     // var t2_now = Date.now();
 
+    console.log(time_utc)
+
     var icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(time_utc);
     var time_date_js = Cesium.JulianDate.toDate(time_utc); /// convert time into js Date()
     var position_ecef = new Cesium.Cartesian3();
     var points = debris_set._pointPrimitives;
+
 
     var pos_radar_view = new Cesium.Cartesian3();
 

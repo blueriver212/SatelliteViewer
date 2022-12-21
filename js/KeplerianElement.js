@@ -140,7 +140,8 @@ KeplerianElement.prototype =
 	{
      //the mean motion
      var n = Math.sqrt(this.GM/this.a)/ this.a;
-      //eccentric anomaly
+    
+	 //eccentric anomaly
      var ecan_t0 = this.get_ecan_from_tran(this.e, this.nu);
 
      // the mean anomaly at t0
@@ -148,13 +149,13 @@ KeplerianElement.prototype =
 
 	 var Mt = M0 + n*t;
 		
-        //because eccentricity is fixed
+	//because eccentricity is fixed
      var ecan_t  = this.get_ecan_from_mean(Mt, this.e);
 
      var tran_t = this.get_tran_from_ecan(ecan_t, this.e);
 
-		//update the true anomaly
-		this.nu = tran_t;
+	//update the true anomaly
+	this.nu = tran_t;
 
 	},
 
@@ -259,17 +260,32 @@ KeplerianElement.prototype =
 		return pos_vel;
 	},
 
-	calculateStateVector(ele, posonly=false)
+	ReturnStateVectorWithTimeStep(timeStep, posonly=false)
 	{
+		// console.log(this.a, this.GM, this.OMEG, this.e, this.i, this.mu)
 		var EGM96_mu = 3.986004415E14;
-		var twoPi = (2*Math.PI)
-		if (ele.eccentricAnomaly == 0) {ele.eccentricAnomaly = 0.0001}
-		var ecan = eccentricAnomaly(ele.mean_anomaly, ele.eccentricity, 1E-6, 20, twoPi)
-		var tran = 2*Math.atan2(Math.sqrt((1+ele.eccentricity)/(1-ele.eccentricity))*Math.sin(ecan/2), Math.cos(ecan/2))
-		var p = ele.semi_major_axis*(1 - ele.eccentricity*ele.eccentricity)
-		var r = p/(1 + ele.eccentricity*Math.cos(tran))
-		var h = Math.sqrt(EGM96_mu*p), ci = Math.cos(ele.inclination), si = Math.sin(ele.inclination), cr = Math.cos(ele.RAAN),
-		sr = Math.sin(ele.RAAN), cw = Math.cos(ele.argument_of_perigee + tran), sw = Math.sin(ele.argument_of_perigee + tran)
+		var twoPi = (2*Math.PI);
+
+		//the mean motion
+		var n = Math.sqrt(this.GM/(this.a)/this.a);
+		if (this.e == 0) {this.e = 0.0001}
+
+		//var ecan = eccentricAnomaly(M, this.e, 1E-6, 20, twoPi)
+		var ecan = this.get_ecan_from_tran(this.e, this.nu);
+
+		// mean anomaly for time zero and time step
+		var M0 = this.get_mean_from_ecan(ecan,this.e);
+		var MT = M0 + (n * timeStep);
+
+		var ecan_t  = this.get_ecan_from_mean(MT, this.e);
+
+		// var tran = 2*Math.atan2(Math.sqrt((1+this.e)/(1-this.e))*Math.sin(ecan/2), Math.cos(ecan/2))
+		var tran_t = this.get_tran_from_ecan(ecan_t, this.e);
+
+		var p = this.a*(1 - this.e*this.e)
+		var r = p/(1 + this.e*Math.cos(tran_t))
+		var h = Math.sqrt(this.GM*p), ci = Math.cos(this.i), si = Math.sin(this.i), cr = Math.cos(this.OMEG),
+		sr = Math.sin(this.OMEG), cw = Math.cos(this.mu + tran_t), sw = Math.sin(this.mu + tran_t)
 
 		var pos = new Cesium.Cartesian3(cr*cw-sr*sw*ci, sr*cw+cr*sw*ci, si*sw), pos2 = new Cesium.Cartesian3()
 		Cesium.Cartesian3.multiplyByScalar(pos, r, pos2)
@@ -277,7 +293,7 @@ KeplerianElement.prototype =
 		return(pos2)
 
 		var vel = new Cesium.Cartesian3(), vel1 = new Cesium.Cartesian3(), vel2 = new Cesium.Cartesian3()
-		Cesium.Cartesian3.subtract(Cesium.Cartesian3.multiplyByScalar(pos2, h*ele.eccentricity*Math.sin(tran)/(r*p), vel1),
+		Cesium.Cartesian3.subtract(Cesium.Cartesian3.multiplyByScalar(pos2, h*this.e*Math.sin(tran_t)/(r*p), vel1),
 					Cesium.Cartesian3.multiplyByScalar(new Cesium.Cartesian3(cr*sw+sr*cw*ci, sr*sw-cr*cw*ci,-si*cw),h/r,vel2),vel)
 		return({pos: pos2, vel: vel})
 	},
