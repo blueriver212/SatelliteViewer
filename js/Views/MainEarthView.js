@@ -138,6 +138,8 @@ function LeftClickOnSatellite(movement)
     } else {
         // Add information to text box - soon will be a table
         //document.getElementById("satelliteInfoBox").value = satcat.ReturnObjectInformationAsJSONForTable(pickedFeature.id)
+        document.getElementById("objectTable").style.display = "block";
+
         var data = satcat.ReturnObjectInformationAsJSONForTable(pickedFeature.id);
         $(function () {
             $('#objectTableBootstrap').bootstrapTable("load", data.item);
