@@ -4,7 +4,9 @@ var clockViewModel; /// the clockmodel for synchronisation of two views
 var data_load=false;
 var handler;
 var satcat = new Catalogue();
+var orbits = new Cesium.EntityCollection();
 var objectCatalogue = new Cesium.PointPrimitiveCollection();
+var handler;
 
 
 // load the current view of space
@@ -45,6 +47,8 @@ function CesiumInitialConditions() {
     viewer_main.clock.startTime = Cesium.JulianDate.now();
     viewer_main.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
     viewer_main.timeline.zoomTo(start_jd, Cesium.JulianDate.addSeconds(start_jd, 86400, new Cesium.JulianDate()));
+    // viewer_main.entities.add(orbits);
+    handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
 }
 
 function PropogateCatalogue() {
@@ -72,6 +76,8 @@ function PropogateCatalogue() {
 
 		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
     	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition);
+        handler.setInputAction(LeftClickOnSatellite, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+    
 }
 
 function UpdateObjectPosition()
@@ -121,5 +127,43 @@ function ICRFViewMain(scene, time)
         var offset = Cesium.Cartesian3.clone(camera.position);
         var transform = Cesium.Matrix4.fromRotationTranslation(icrfToFixed);
         camera.lookAtTransform(transform, offset);
+    }
+}
+
+function LeftClickOnSatellite(movement)
+{
+    const pickedFeature = viewer_main.scene.pick(movement.position);
+    if (!Cesium.defined(pickedFeature)) {
+        return;
+    } else {
+        // Add information to text box - soon will be a table
+        //document.getElementById("satelliteInfoBox").value = satcat.ReturnObjectInformationAsJSONForTable(pickedFeature.id)
+        document.getElementById("objectTable").style.display = "block";
+
+        var data = satcat.ReturnObjectInformationAsJSONForTable(pickedFeature.id);
+        $(function () {
+            $('#objectTableBootstrap').bootstrapTable("load", data.item);
+            $('#objectTableBootstrap').bootstrapTable("updateFormatText", 'test');
+        });
+
+
+
+
+        // the plot the orbit of the selected satellite
+        // var orbit_positions = satcat.GetOrbitForObject(pickedFeature.id);
+        // console.log(orbit_positions)
+        // viewer_main.entities.removeAll();
+        // viewer_main.entities.add({
+        //     name: 'orbit',
+        //     polyline: {
+        //     positions: Cesium.Cartesian3.fromDegrees(orbit_positions), 
+        //     width: 10,
+        //     material : new Cesium.PolylineOutlineMaterialProperty({
+        //         color : Cesium.Color.DEEPSKYBLUE,
+        //         outlineWidth : 4,
+        //         outlineColor : Cesium.Color.DARKBLUE
+        //         })
+        //     }
+        // })
     }
 }

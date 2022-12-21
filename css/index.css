@@ -226,3 +226,42 @@ body {
   background-color: grey;
   color: #fff;
 }
+
+#objectTable {
+  position: absolute;
+  z-index: 9999;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+  top:60%;
+  left:5%;
+}
+
+#objectTableLegend {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: grey;
+  color: #fff;
+}
+
+.fixed-table-loading {
+  visibility: hidden;
+  top: 0px;
+  display: none;
+}
+
+.loading-wrap {
+  visibility: hidden;
+  display: none;
+}
+
+.table-loading {
+  visibility: hidden;
+  display: none;
+}
+
+.loading {
+  visibility: hidden;
+  display: none;
+}
