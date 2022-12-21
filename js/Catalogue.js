@@ -27,6 +27,50 @@ class Catalogue
 		this.data_load_complete=false;
 	}
 
+	/* 
+	Takes an input JSON file and an orbit type (currently defaults to Keplerian Elements) and will load them back to an array
+	Will return a boolean depending if the data has been successfully loaded into the software.
+	*/
+	LoadCatalogue(jsonFile, orbitType)
+	{
+		// first remove any satellites that already exist in the catalogue
+		this.objectsKeplerian = [];
+		this.objectsTLE = [];
+		
+		if (orbitType == "TLE")
+		{
+			this.objectsTLE = jsonFile;
+			this.data_load_complete = true;
+			return true;
+		}
+		else if(orbitType == "kep")
+		{
+			this.objectsKeplerian = jsonFile;
+			
+			// create an index that can then be looped back over when propogating
+			// The data has already been loaded into objects Keplerian, this will parse the integers and add index
+			for(var objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
+			{
+				// Dates
+				var epochOfOrbit = this.objectsKeplerian[objectID]["epoch_of_orbit"];			
+				var timeString = epochOfOrbit.split("-");
+				var month = parseInt(timeString[1])-1;
+
+				// Add index and parse string to numbers for kep elements
+				this.objectsKeplerian[objectID]["object_id"] = objectID; 
+				this.objectsKeplerian[objectID]["true_anomaly"] = parseFloat(this.objectsKeplerian[objectID]["true_anomaly"]);
+				this.objectsKeplerian[objectID]['semi_major_axis'] = parseFloat(this.objectsKeplerian[objectID]['semi_major_axis']);
+				this.objectsKeplerian[objectID]["eccentricity"] = parseFloat(this.objectsKeplerian[objectID]["eccentricity"]);
+				this.objectsKeplerian[objectID]["inclination"] = parseFloat(this.objectsKeplerian[objectID]["inclination"]);
+				this.objectsKeplerian[objectID]["epoch_of_orbit"] = new Date(this.objectsKeplerian[objectID]["epoch_of_orbit"]);				
+				this.objectsKeplerian[objectID]["RAAN"] = parseFloat(this.objectsKeplerian[objectID]["RAAN"]);
+				this.objectsKeplerian[objectID]["argument_of_perigee"] = parseFloat(this.objectsKeplerian[objectID]["argument_of_perigee"]);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	StringToDate(_date_str,_format,_delimiter)
 	{
 		var time = _date_str.split(_delimiter);
@@ -39,9 +83,13 @@ class Catalogue
 		return this.objectsKeplerian.length + this.objectsTLE.length;
 	}
 
-	ReturnCatalogue()
+	ReturnCatalogue(dataType)
 	{
-		return this.objectsKeplerian;
+		if (dataType === "kep") {
+			return this.objectsKeplerian;
+		} else {
+			return this.objectsTLE;
+		}
 	}
 
 	GetObjectInfo(isat)
@@ -164,64 +212,14 @@ class Catalogue
 				"value": this.objectsKeplerian[isat]["mass"]
 			}
 		]}
-
-
-		// var satellite_info = `Name: ${this.objectsKeplerian[isat]["RSO_name"].trim()}, 
-		// Owner: ${this.objectsKeplerian[isat]["owner"].trim()}`;
 		return data;
 	}
 
-	/* 
-	Takes an input JSON file and an orbit type (currently defaults to Keplerian Elements) and will load them back to an array
-	Will return a boolean depending if the data has been successfully loaded into the software.
-	*/
-	LoadCatalogue(jsonFile, orbitType = "kep")
-	{
-		// first remove any satellites that already exist in the catalogue
-		this.objectsKeplerian = [];
-		
-		if (orbitType == "tle")
-		{
-			that.objectsTLE = data.debris;
-			that.data_load_complete = true;
-
-			return true;
-		}
-		else if(orbitType == "kep")
-		{
-			this.objectsKeplerian = jsonFile;
-			
-			// create an index that can then be looped back over when propogating
-			// The data has already been loaded into objects Keplerian, this will parse the integers and add index
-			for(var objectID = 0; objectID < this.objectsKeplerian.length; objectID++)
-			{
-				// Dates
-				var epochOfOrbit = this.objectsKeplerian[objectID]["epoch_of_orbit"];			
-				var timeString = epochOfOrbit.split("-");
-				var month = parseInt(timeString[1])-1;
-
-				// Add index and parse string to numbers for kep elements
-				this.objectsKeplerian[objectID]["object_id"] = objectID; 
-				this.objectsKeplerian[objectID]["true_anomaly"] = parseFloat(this.objectsKeplerian[objectID]["true_anomaly"]);
-				this.objectsKeplerian[objectID]['semi_major_axis'] = parseFloat(this.objectsKeplerian[objectID]['semi_major_axis']);
-				this.objectsKeplerian[objectID]["eccentricity"] = parseFloat(this.objectsKeplerian[objectID]["eccentricity"]);
-				this.objectsKeplerian[objectID]["inclination"] = parseFloat(this.objectsKeplerian[objectID]["inclination"]);
-				this.objectsKeplerian[objectID]["epoch_of_orbit"] = new Date(this.objectsKeplerian[objectID]["epoch_of_orbit"]);				
-				this.objectsKeplerian[objectID]["RAAN"] = parseFloat(this.objectsKeplerian[objectID]["RAAN"]);
-				this.objectsKeplerian[objectID]["argument_of_perigee"] = parseFloat(this.objectsKeplerian[objectID]["argument_of_perigee"]);
-			}
-			return true;
-		}
-		return false;
-	}
-
-
-
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
-	ComputeObjectPositionECI(isat, time)
+	ComputeObjectPositionECI(isat, time, dataType)
 	{
-		if(isat < this.objectsKeplerian.length) /// using keplerian propagation
+		if(dataType === "kep") /// using keplerian propagation
 		{
 			var idebri = this.objectsKeplerian[isat];
 			var kep = new KeplerianElement();
@@ -241,7 +239,7 @@ class Catalogue
 			return pv;
 		}
 
-		else if(isat >= this.objectsKeplerian.length && isat < this.getNumberTotal()) // using spg4 propogation
+		else if(dataType === "TLE") // using spg4 propogation
 		{
 			var idebri = this.objectsTLE[isat-this.objectsKeplerian.length];
 			var line1,line2;
