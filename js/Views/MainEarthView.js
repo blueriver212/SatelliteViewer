@@ -53,29 +53,22 @@ function PropogateCatalogue() {
 		objectCatalogue = viewer_main.scene.primitives.add(objectCatalogue);
 		objectCatalogue.blendOption=Cesium.BlendOption.OPAQUE;
 
-		for (var debrisID = 0; debrisID < satcat.getNumberTotal(); debrisID++) 
-		{
-			var operation_status = satcat.getDebrisOperationStatus(debrisID);
-			var name = satcat.getSatelliteName(debrisID);
-            var date = new Date(satcat.getSalliteDate(debrisID))
-            if (name.includes('Starlink') && date < new Date('2022-10-01')){
-                if (operation_status > 0.0) {
-                    colour = Cesium.Color.YELLOW;
-    
-                    objectCatalogue.add({
-                        id: [debrisID],
-                        position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-                        pixelSize: 1,
-                        alpha: 0.5,
-                        color: colour
-                    });
-                } 
-                // else {
-                //     colour = Cesium.Color.RED;
-                // }  
-            }
-			  
-		}
+        satcat.ReturnCatalogue().forEach(element => {
+            var operationStatus = satcat.GetObjectOperationStatusFromPayloadOperationalStatus(element["payload_operational_status"].trim());
+            if (operationStatus > 0.0) {
+                colour = Cesium.Color.YELLOW;
+            } 
+            else {
+                colour = Cesium.Color.RED;
+            }  
+            objectCatalogue.add({
+                id: element["object_id"],
+                position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+                pixelSize: 1,
+                alpha: 0.5,
+                color: colour
+            });
+        });
 
 		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
     	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition);
@@ -100,7 +93,7 @@ function UpdateObjectPosition()
     points.forEach(element => {
             if (Cesium.defined(icrfToFixed)) // date transformation
             {
-                var positionAndVelocity = satcat.computeDebrisPositionECI(element._id[0], time_date_js);
+                var positionAndVelocity = satcat.ComputeObjectPositionECI(element._id, time_date_js);
                 var position_eci = new Cesium.Cartesian3( 
                     positionAndVelocity.pos.x*1000,
                     positionAndVelocity.pos.y*1000,

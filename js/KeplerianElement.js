@@ -97,10 +97,6 @@ KeplerianElement.prototype =
 	},
 	ReturnStateVectorWithTimeStep(timeStep, posonly=false)
 	{
-		// console.log(this.a, this.GM, this.OMEG, this.e, this.i, this.mu)
-		var EGM96_mu = 3.986004415E14;
-		var twoPi = (2*Math.PI);
-
 		//the mean motion
 		var n = Math.sqrt(this.GM/(this.a)/this.a);
 		if (this.e == 0) {this.e = 0.0001}

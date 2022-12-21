@@ -8,7 +8,7 @@ class Catalogue
 		this.data_load_complete=false;
 	}
 
-	static clear_catalog(type)
+	static ClearCatalogue(type)
 	{
 		if(type=="kpe")
 		{
@@ -27,19 +27,24 @@ class Catalogue
 		this.data_load_complete=false;
 	}
 
-	stringToDate(_date_str,_format,_delimiter)
+	StringToDate(_date_str,_format,_delimiter)
 	{
 		var time = _date_str.split(_delimiter);
 		var formatedDate = new Date(time[0],(time[0]-1),time[2]);
 		return formatedDate;
 	}
 
-	getNumberTotal()
+	GetNumberTotal()
 	{
 		return this.objectsKeplerian.length + this.objectsTLE.length;
 	}
 
-	getDebriInfo(isat)
+	ReturnCatalogue()
+	{
+		return this.objectsKeplerian;
+	}
+
+	GetObjectInfo(isat)
 	{
 		if(isat < this.objectsKeplerian.length)
 		{
@@ -52,11 +57,11 @@ class Catalogue
 		}
 	}
 
-	getSalliteDate(isat){
+	GetObjectDate(isat){
 		return this.objectsKeplerian[isat]["launch_date"];
 	}
 
-	getDebriName(isat)
+	GetObjectName(isat)
 	{
 		if(isat < this.objectsKeplerian.length)
 		{
@@ -75,7 +80,7 @@ class Catalogue
 	}
 	
 	//ref: http://www.celestrak.com/satcat/status.php
-	getDebrisOperationStatus(isat)
+	GetObjectOperationStatus(isat)
 	{
 		var s = -1;
 		if(isat < this.objectsKeplerian.length)
@@ -102,12 +107,32 @@ class Catalogue
 		return s;
 	}
 
-	getSatelliteName(isat) 
+	GetObjectOperationStatusFromPayloadOperationalStatus(paylodOperationalStatus) 
+	{
+		var s = -1;
+		var aa = paylodOperationalStatus;
+		if(aa == '+') {s = 1;} /// operational 
+		else if(aa == '-') 	{s = -1;} /// non-operational
+		else if(aa == 'P') 	{s = 0.5;} /// partially operational 
+		else if(aa == 'B') 	{s = 0.2;} /// backup/standby
+		else if(aa == 'S') 	{s = 0.8;} /// spare
+		else if(aa == 'X') 	{s = 0.3;} /// extended mission
+		else if(aa == 'D') 	{s = -0.2;} /// Decayed
+		else if(aa == '?')  {s = 0;} /// unknown	
+		else  /// not set
+		{
+			s = -1;
+		}
+		
+		return s;
+	}
+
+	GetObjectName(isat) 
 	{
 		return this.objectsKeplerian[isat]["RSO_name"].trim();
 	}
 
-	returnSatelliteInformationAsString(isat) 
+	ReturnObjectInformationAsString(isat) 
 	{
 		var satellite_info = `Name: ${this.objectsKeplerian[isat]["RSO_name"].trim()}, 
 		Owner: ${this.objectsKeplerian[isat]["owner"].trim()}`;
@@ -162,7 +187,7 @@ class Catalogue
 
 	/// compute the positon of debris in eci
 	/// time is in  JavaScript Date in UTC
-	computeDebrisPositionECI(isat, time)
+	ComputeObjectPositionECI(isat, time)
 	{
 		if(isat < this.objectsKeplerian.length) /// using keplerian propagation
 		{
@@ -201,7 +226,7 @@ class Catalogue
 		}
 	}
 
-	getOrbitForSatellite(isat)
+	GetOrbitForSatellite(isat)
 	{
 		// Get the satellite
 		var idebri = this.objectsKeplerian[isat];
