@@ -10,6 +10,8 @@
   <script src="../node_modules/cesium/Build/Cesium/Cesium.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+
   <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
@@ -64,11 +66,23 @@
   </nav>
 
   <div class="card border-dark mb-3" id="satelliteLegend">
-    <div class="card-body text" id="satelliteLegendheader">Click here to move</div>
     <div class="card-body text">
       <h5 class="card-title">Object Type</h5>
       <div class="box red"></div><p class="card-text" style="white-space: pre; white-space: after;"> Debris</p>
       <div class="box yellow"></div><p class="card-text" style="white-space: pre; ">Active Satellite</p>
+    </div> 
+  </div>
+
+  <div class="card border-dark mb-3" id="objectTable">
+    <div class="card-body text">
+      <table class="table table-sm table-hover" id="objectTableBootstrap" data-toggle="table">
+          <thead>
+              <tr>
+                  <th data-field="param">Item ID</th>
+                  <th data-field="value">Item Name</th>
+              </tr>
+          </thead>
+      </table>
     </div> 
   </div>
 
@@ -81,10 +95,6 @@
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="addSecondYearSatelliteData()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
-    <form class="SatelliteInfo" id = "satelliteInfo" style="margin:auto;width:900px; z-index: -100;">
-      <input id="satelliteInfoBox" type="text" placeholder="Select a Satellite" name="search" style="width:900px">
-    </form>
-
     <!-- For the spinner when needed -->
     <form class="example" id="spinner" style="margin:auto;max-width:300px; z-index: -9999;">
       <button class=" btn btn-primary" type="button" style="background-color: #65737e ;" disabled>
@@ -222,6 +232,7 @@
 <script>
 
 dragElement(document.getElementById("satelliteLegend"));
+dragElement(document.getElementById("objectTable"));
 
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
