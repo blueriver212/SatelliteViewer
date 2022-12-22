@@ -22,14 +22,18 @@ class ApiHandler
             }
         } 
 
-        // will need to validate that it is actual TLE, but this can come later
+        if (dataType === "TLE") {
+            
+        }
         
         return true;
     }
 
     LoadJSONSatelliteData()
     {
-        var temp = null;
+        var objects;
+        var temp;
+
         if (this.dataType === "kep") {
             $.ajax({
                 url: this.baseURL,
@@ -37,7 +41,7 @@ class ApiHandler
                 dataType: "json",
                 async: false,
                 success: function(data) { /// a callback function to parse the data into the class object
-                    temp = data.debris; 
+                    objects = data.debris; 
                 }
              })
         } else if (this.dataType === "TLE") {
@@ -47,12 +51,22 @@ class ApiHandler
                 success: function (data){
                     temp = data;                    
                 }
-            });   
+            }); 
+            temp = temp.split(/\r?\n|\r|\n/g);
+            objects = [];
+            for (var i = 0; i < temp.length; i++){
+                if (temp[i][0] == "1") {
+                    objects.push(temp[i]);
+                } else if (temp[i][0] == "2"){
+                    var lastItem = objects.pop();
+                    objects.push([lastItem, temp[i]])
+                }
+            }  
         }
 
-        if(this.DataValidater(temp, this.dataType))
+        if(this.DataValidater(objects, this.dataType))
         {
-            return temp;
+            return objects;
         }
     }
 }

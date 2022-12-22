@@ -7,19 +7,20 @@ var satcat = new Catalogue();
 var orbits = new Cesium.EntityCollection();
 var objectCatalogue = new Cesium.PointPrimitiveCollection();
 var handler;
+var dataFormat;
 
 
 // load the current view of space
 async function LoadLiveSatelliteData() {
     // look at the current map and then remove any existing satellites
     CesiumInitialConditions();
-    var satelliteJSON;
-    var dataFormat = "TLE"
-    var apiHandler = new ApiHandler("./data/test.txt", dataFormat);   
-    satelliteJSON = apiHandler.LoadJSONSatelliteData();
 
-    if (satcat.LoadCatalogue(satelliteJSON, dataFormat)) {
-        PropogateCatalogueKep(dataFormat);
+    dataFormat = "kep";
+    var apiHandler = new ApiHandler("./data/2023.json", dataFormat);   
+    var satellites = apiHandler.LoadJSONSatelliteData();
+    
+    if (satcat.LoadCatalogue(satellites, dataFormat)) {
+        PropogateCatalogue(dataFormat);
     } else {
         alert("Unable to load catalogue into the visualiser. Please try again.");
     }
@@ -51,14 +52,14 @@ function CesiumInitialConditions() {
     handler = new Cesium.ScreenSpaceEventHandler(viewer_main.scene.canvas);
 }
 
-function PropogateCatalogueKep(dataType) {
+function PropogateCatalogue() {
         // By seting the blendOption to OPAQUE can improve the performance twice 
 		/// should organize debris in different orbtis to different collections
 		objectCatalogue = viewer_main.scene.primitives.add(objectCatalogue);
 		objectCatalogue.blendOption=Cesium.BlendOption.OPAQUE;
         
-        if (dataType == "kep") {
-            satcat.ReturnCatalogue(dataType).forEach(element => {
+        if (dataFormat === "kep") {
+            satcat.ReturnCatalogue(dataFormat).forEach(element => {
                 var operationStatus = satcat.GetObjectOperationStatusFromPayloadOperationalStatus(element["payload_operational_status"].trim());
                 if (operationStatus > 0.0) {
                     colour = Cesium.Color.YELLOW;
@@ -76,22 +77,25 @@ function PropogateCatalogueKep(dataType) {
                 });
             });
         } else {
-            var data = satcat.ReturnCatalogue(dataType);
-            objectCatalogue.add({
-                id: 1,
-                position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
-                pixelSize: 1,
-                alpha: 0.5,
-                color: colour
-            });
+            var dataTLE = satcat.ReturnCatalogue(dataFormat);
+
+            for (var i = 0; i < dataTLE.length; i ++) {
+                objectCatalogue.add({
+                    id: i,
+                    position: Cesium.Cartesian3.fromDegrees(0.0, 0.0),
+                    pixelSize: 10,
+                    alpha: 0.5,
+                    color: colour
+                });
+            }   
         }
 
 		viewer_main.scene.postUpdate.addEventListener(this.ICRFViewMain); // enable Earth rotation, everything is seen to be in eci
-    	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition(dataType));
+    	viewer_main.scene.postUpdate.addEventListener(this.UpdateObjectPosition);
         handler.setInputAction(LeftClickOnSatellite, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 }
 
-function UpdateObjectPosition(dataType)
+function UpdateObjectPosition()
 {	
 
     time = viewer_main.clock.currentTime; /// the current computer time in TAI? not in UTC?
@@ -104,36 +108,35 @@ function UpdateObjectPosition(dataType)
     var position_ecef = new Cesium.Cartesian3();
     var points = objectCatalogue._pointPrimitives;
 
-
     var pos_radar_view = new Cesium.Cartesian3();
     points.forEach(element => {
             if (Cesium.defined(icrfToFixed)) // date transformation
             {
-                var positionAndVelocity = satcat.ComputeObjectPositionECI(element._id, time_date_js, dataType);
-                var position_eci = new Cesium.Cartesian3( 
-                    positionAndVelocity.pos.x*1000,
-                    positionAndVelocity.pos.y*1000,
-                    positionAndVelocity.pos.z*1000
-                );
-                
-                position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);    
-                Cesium.Cartesian3.clone(position_ecef, pos_radar_view);     
-
-                element.position = position_ecef; //// update back     
-            }
-
-            if (dataType === "TLE"){
-                var positionAndVelocity = satcat.ComputeObjectPositionECI(element._id, time_date_js, dataType);
-                var position_eci = new Cesium.Cartesian3( 
-                    positionAndVelocity.pos.x*1000,
-                    positionAndVelocity.pos.y*1000,
-                    positionAndVelocity.pos.z*1000
-                );
-                
-                position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);    
-                Cesium.Cartesian3.clone(position_ecef, pos_radar_view);     
-
-                element.position = position_ecef; //// update back     
+                if (dataFormat === "kep") {
+                    var positionAndVelocity = satcat.ComputeObjectPositionECI(element._id, time_date_js, dataFormat);
+                    var position_eci = new Cesium.Cartesian3( 
+                        positionAndVelocity.pos.x*1000,
+                        positionAndVelocity.pos.y*1000,
+                        positionAndVelocity.pos.z*1000
+                    );
+                 
+                    position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);    
+                    Cesium.Cartesian3.clone(position_ecef, pos_radar_view);     
+    
+                    element.position = position_ecef; //// update back     
+                } else if (dataFormat === "TLE") {
+                    var positionAndVelocity = satcat.ComputeObjectPositionECI(element._id, time_date_js, dataFormat);
+                    var position_eci = new Cesium.Cartesian3( 
+                        positionAndVelocity.position.x/1000000,
+                        positionAndVelocity.position.y/1000000,
+                        positionAndVelocity.position.z/1000000
+                    );
+                    
+                    position_ecef = Cesium.Matrix3.multiplyByVector(icrfToFixed, position_eci, position_ecef);    
+                    Cesium.Cartesian3.clone(position_ecef, pos_radar_view);     
+    
+                    element.position = position_ecef; //// update back     
+                }
             }
     });
 }

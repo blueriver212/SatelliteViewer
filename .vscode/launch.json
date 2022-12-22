@@ -1,20 +1,11 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Attach to Process",
-            "type": "node",
-            "protocol": "inspector",
-            "request": "attach",
-            "stopOnEntry": false,
-            "port": 5858,
-            "localRoot": "${workspaceRoot}",
-            "remoteRoot": "${workspaceFolder}\\app.js",
-            "sourceMaps": true
-        }
+    {
+        "name": "Launch Chrome",
+        "request": "launch",
+        "type": "chrome",
+        "url": "http://localhost:3000",
+        "webRoot": "${workspaceFolder}"
+    }
     ]
 }
-

@@ -241,12 +241,12 @@ class Catalogue
 
 		else if(dataType === "TLE") // using spg4 propogation
 		{
-			var idebri = this.objectsTLE[isat-this.objectsKeplerian.length];
-			var line1,line2;
-			line1 = idebri["line1"];
-			line2 = idebri["line2"];
+			var idebri = this.objectsTLE[isat];
+			var line1 = idebri[0];
+			var line2 = idebri[1];
 			
 			var satrec = satellite.twoline2satrec(line1, line2);
+			console.log(satrec)
 			var positionAndVelocity = satellite.propagate(satrec,time); /// in km
 			return positionAndVelocity;
 		}
