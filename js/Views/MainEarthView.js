@@ -14,7 +14,6 @@ var dataFormat;
 async function LoadLiveSatelliteData() {
     // look at the current map and then remove any existing satellites
     CesiumInitialConditions();
-
     dataFormat = "kep";
     var apiHandler = new ApiHandler("./data/2023.json", dataFormat);   
     var satellites = apiHandler.LoadJSONSatelliteData();
