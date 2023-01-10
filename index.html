@@ -35,7 +35,7 @@
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65737e ;">
-    <a class="navbar-brand" href="#">Future Space Populations</a>
+    <a class="navbar-brand" href="#">2023 Space Populations</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -69,7 +69,7 @@
     <div class="card-body text">
       <h5 class="card-title">Object Type</h5>
       <div class="box red"></div><p class="card-text" style="white-space: pre; white-space: after;"> Debris</p>
-      <div class="box yellow"></div><p class="card-text" style="white-space: pre; ">Active Satellite</p>
+      <div class="box yellow"></div><p class="card-text" style="white-space: pre; white-space:break-spaces;">Active Satellite</p>
     </div> 
   </div>
 
@@ -88,14 +88,14 @@
   </div>
 
   <div id="cesiumContainer">
-    <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9998;">
+    <!-- <form class="example" id = "button1year" style="margin:auto;max-width:300px; z-index: 9998;">
       <input id="1yearsearch" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="whichMap(1)" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
     </form>
     <form class="example1" id = "button2year" style="margin:auto;max-width:300px; z-index: -100;">
       <input id="button2yearval" type="text" placeholder="Enter a Year.." name="search">
       <button type="button" onclick="addSecondYearSatelliteData()" style="background-color: #65737e ;"><i class="fa fa-search"></i></button>
-    </form>
+    </form> -->
 
     <!-- For the spinner when needed -->
     <form class="example" id="spinner" style="margin:auto;max-width:300px; z-index: -9999;">
@@ -106,7 +106,7 @@
     </form>
 
     <!-- For the dropdown box -->
-    <form class="drop" id="dropdown" style="margin:auto;max-width:300px; z-index: 9999;">
+    <!-- <form class="drop" id="dropdown" style="margin:auto;max-width:300px; z-index: 9999;">
       <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Search By Country (Optional)
       </button>
@@ -114,10 +114,10 @@
         <a class="dropdown-item" href="#" onclick="whichMap(2)">US</a>
         <a class="dropdown-item" href="#">CIS (Russia)</a>
         <a class="dropdown-item" href="#">UK</a>
-        <!-- <div class="dropdown-divider"></div> -->
+        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="#">Iran</a>
       </div>
-    </form>
+    </form> -->
 
     <div class="btn-group btn-group-toggle" id = "hotspot_toolbar" data-toggle="buttons" style="margin:auto;max-width:50%; z-index: -9999;  position: absolute; left:37%; top:10%; width:5%;">
       <label class="btn btn-secondary active">
@@ -143,24 +143,24 @@
       </label>
     </div>
 
-    <div class="container-fluid" >
-      <div class="row">
-        <div class="col-sm-2 d-flex justify-content-center" id="hotspot_legend" style="top:30px; z-index: -9999;">
-          <div class="card border-dark mb-3"  style = "max-width: 18rem; margin:auto;  position: absolute;background-color: #6C757D  ;">
-            <!-- <div class="card-header text"></div> -->
-            <div class="card-body text">
-              <h5 class="card-title">Number of Satellites</h5>
-              <h5 class="card-title">in LEO, < 1000 km</h5>
-              <div class="box forestgreen"></div><p class="card-text" style="white-space: pre;">  0 - 5</p>
-              <div class="box gold"></div><p class="card-text" style="white-space: pre;">  6-10</p>
-              <div class="box orange"></div><p class="card-text" style="white-space: pre;">  11-15</p>
-              <div class="box darkorange"></div><p class="card-text" style="white-space: pre;">  16-20</p>
-              <div class="box red"></div><p class="card-text" style="white-space: pre;">  20+</p>
-            </div>
+  <div class="container-fluid" >
+    <div class="row">
+      <div class="col-sm-2 d-flex justify-content-center" id="hotspot_legend" style="top:30px; z-index: -9999;">
+        <div class="card border-dark mb-3"  style = "max-width: 18rem; margin:auto;  position: absolute;background-color: #6C757D  ;">
+          <!-- <div class="card-header text"></div> -->
+          <div class="card-body text">
+            <h5 class="card-title">Number of Satellites</h5>
+            <h5 class="card-title">in LEO, < 1000 km</h5>
+            <div class="box forestgreen"></div><p class="card-text" style="white-space: pre;">  0 - 5</p>
+            <div class="box gold"></div><p class="card-text" style="white-space: pre;">  6-10</p>
+            <div class="box orange"></div><p class="card-text" style="white-space: pre;">  11-15</p>
+            <div class="box darkorange"></div><p class="card-text" style="white-space: pre;">  16-20</p>
+            <div class="box red"></div><p class="card-text" style="white-space: pre;">  20+</p>
           </div>
-        </div>  
-      </div>
+        </div>
+      </div>  
     </div>
+  </div>
 
   <div id="modal" class="modal" style="z-index: 9999;">
     <div class="modal-inner modal-lg">
